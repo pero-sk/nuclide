@@ -1,7 +1,7 @@
 {
   "id": "molecules:calcium_chloride",
   "name": "Calcium Chloride",
-  "nowns": "[Ca^+2].[Cl^-1].[Cl^-1]",
+  "nowns": "[Ca^+2]([Cl^-1])[Cl^-1]",
   "molar_mass": 110.98,
   "state": "solid",
   "melting_point": 772.0,
