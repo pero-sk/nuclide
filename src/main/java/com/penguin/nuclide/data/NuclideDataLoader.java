@@ -44,6 +44,7 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
         MOLECULES.clear();
 
         loadFolder(manager, "molecules");
+        loadFolder(manager, "atoms");
 
         LOGGER.info("[Nuclide] Loaded {} molecule definitions", MOLECULES.size());
 
