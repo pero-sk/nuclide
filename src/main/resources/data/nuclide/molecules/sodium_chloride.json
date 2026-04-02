@@ -1,0 +1,12 @@
+{
+  "id": "molecules:sodium_chloride",
+  "name": "Sodium Chloride",
+  "nowns": "[Na^+1].[Cl^-1]",
+  "molar_mass": 58.44,
+  "state": "solid",
+  "melting_point": 801.0,
+  "boiling_point": 1465.0,
+  "radioactive": false,
+  "toxic": false,
+  "flammable": false
+}

@@ -1,0 +1,12 @@
+{
+  "id": "atoms:uranium_238",
+  "name": "Uranium-238",
+  "nowns": "[U:238]",
+  "molar_mass": 238.05,
+  "state": "solid",
+  "melting_point": 1405.0,
+  "boiling_point": 4404.0,
+  "radioactive": true,
+  "toxic": true,
+  "flammable": false
+}
