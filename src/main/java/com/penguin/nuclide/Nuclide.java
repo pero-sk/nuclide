@@ -1,6 +1,6 @@
 package com.penguin.nuclide;
 
-import com.penguin.nuclide.command.MoleculeCommandDispatcher;
+import com.penguin.nuclide.command.SpeciesCommandDispatcher;
 import com.penguin.nuclide.data.NuclideDataLoader;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -17,7 +17,7 @@ public class Nuclide implements ModInitializer {
         NuclideDataLoader.register();
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            MoleculeCommandDispatcher.register(dispatcher);
+            SpeciesCommandDispatcher.register(dispatcher);
         });
 
         LOGGER.info("Nuclide initialized");

@@ -7,7 +7,6 @@ import com.penguin.nuclide.atomic.StateType;
 import com.penguin.nuclide.nowns.NownsNormaliser;
 import com.penguin.nuclide.nowns.NownsParser;
 import com.penguin.nuclide.nowns.ParsedMolecule;
-import com.penguin.nuclide.nowns.SpeciesKind;
 import com.penguin.nuclide.nowns.validation.NownsValidator;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -28,7 +27,7 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
     private static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public static final MoleculeRegistry MOLECULES = new MoleculeRegistry();
+    public static final SpeciesRegistry SPECIES = new SpeciesRegistry();
 
     public static void register() {
         ResourceManagerHelper.get(ResourceType.SERVER_DATA)
@@ -37,24 +36,24 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
 
     @Override
     public Identifier getFabricId() {
-        return Identifier.of(MOD_ID, "molecule_loader");
+        return Identifier.of(MOD_ID, "species_loader");
     }
 
     @Override
     public void reload(ResourceManager manager) {
-        MOLECULES.clear();
+        SPECIES.clear();
 
         loadFolder(manager, "molecules", SpeciesKind.MOLECULE);
         loadFolder(manager, "atoms", SpeciesKind.ATOM);
 
-        LOGGER.info("[Nuclide] Loaded {} molecule definitions", MOLECULES.size());
+        LOGGER.info("[Nuclide] Loaded {} molecule definitions", SPECIES.size());
 
-        MoleculeDefinition water = MOLECULES.getById("nuclide:water");
+        SpeciesDefinition water = SPECIES.getById("molecules:water");
         if (water != null) {
             LOGGER.info("[Nuclide] Water normalized NOWNS: {}", water.normalizedNowns());
         }
 
-        MoleculeDefinition salt = MOLECULES.getByNormalizedNowns("nuclide:[Cl^-1].[Na^+1]");
+        SpeciesDefinition salt = SPECIES.getByNormalizedNowns("nuclide:[Cl^-1].[Na^+1]");
         if (salt != null) {
             LOGGER.info("[Nuclide] Salt normalized NOWNS lookup worked: {}", salt.id());
         }
@@ -73,8 +72,8 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
             try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
                 JsonObject root = GSON.fromJson(reader, JsonObject.class);
 
-                MoleculeDefinition definition = parseMoleculeDefinition(root, resourceId, kind);
-                MOLECULES.register(definition);
+                SpeciesDefinition definition = parseSpeciesDefinition(root, resourceId, kind);
+                SPECIES.register(definition);
 
             } catch (Exception e) {
                 throw new IllegalStateException("Failed to load molecule JSON: " + resourceId, e);
@@ -82,7 +81,7 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
         }
     }
 
-    private MoleculeDefinition parseMoleculeDefinition(JsonObject root, Identifier resourceId, SpeciesKind kind) {
+    private SpeciesDefinition parseSpeciesDefinition(JsonObject root, Identifier resourceId, SpeciesKind kind) {
         String id = JsonHelper.requireString(root, "id");
         String name = JsonHelper.optionalString(root, "name", id);
         String rawNowns = JsonHelper.requireString(root, "nowns");
@@ -99,7 +98,7 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
         NownsValidator.validateOrThrow(parsed.molecule());
         String normalized = NownsNormaliser.normalise(parsed);
 
-        return new MoleculeDefinition(
+        return new SpeciesDefinition(
                 id,
                 name,
                 rawNowns,

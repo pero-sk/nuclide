@@ -1,7 +1,7 @@
 package com.penguin.nuclide.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.penguin.nuclide.data.MoleculeDefinition;
+import com.penguin.nuclide.data.SpeciesDefinition;
 import com.penguin.nuclide.data.NuclideDataLoader;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
@@ -11,33 +11,34 @@ import net.minecraft.util.Identifier;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
-public final class MoleculeCommandDispatcher {
+public final class SpeciesCommandDispatcher {
 
-    private MoleculeCommandDispatcher() {}
+    private SpeciesCommandDispatcher() {}
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
-                literal("molecule")
+                literal("species")
                         .then(argument("id", IdentifierArgumentType.identifier())
                                 .executes(context -> {
                                     Identifier id = IdentifierArgumentType.getIdentifier(context, "id");
 
-                                    MoleculeDefinition molecule = NuclideDataLoader.MOLECULES.getById(id.toString());
+                                    SpeciesDefinition species = NuclideDataLoader.SPECIES.getById(id.toString());
 
-                                    if (molecule != null) {
+                                    if (species != null) {
                                         context.getSource().sendFeedback(
                                                 () -> Text.of(
-                                                        "Molecule found: " +
-                                                        molecule.id() +
-                                                        " | name=" + molecule.name() +
-                                                        " | raw=" + molecule.rawNowns() +
-                                                        " | normalized=" + molecule.normalizedNowns()
+                                                        "Species found: " +
+                                                        species.id() +
+                                                        " | name=" + species.name() +
+                                                        " | raw=" + species.rawNowns() +
+                                                        " | normalized=" + species.normalizedNowns() +
+                                                        " | kind=" + species.kind()
                                                 ),
                                                 false
                                         );
                                         return 1;
                                     } else {
-                                        context.getSource().sendError(Text.of("Molecule not found: " + id));
+                                        context.getSource().sendError(Text.of("Species not found: " + id));
                                         return 0;
                                     }
                                 }))

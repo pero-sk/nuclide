@@ -1,13 +1,12 @@
 package com.penguin.nuclide.data;
 
 import com.penguin.nuclide.nowns.ParsedMolecule;
-import com.penguin.nuclide.nowns.SpeciesKind;
 import com.penguin.nuclide.atomic.Molecule;
 import com.penguin.nuclide.atomic.StateType;
 
 import java.util.Objects;
 
-public final class MoleculeDefinition {
+public final class SpeciesDefinition {
     private final String id;
     private final String name;
     private final String rawNowns;
@@ -28,7 +27,7 @@ public final class MoleculeDefinition {
     // kind
     private final SpeciesKind kind;
 
-    public MoleculeDefinition(
+    public SpeciesDefinition(
             String id,
             String name,
             String rawNowns,
