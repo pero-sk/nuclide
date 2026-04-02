@@ -1,0 +1,12 @@
+{
+  "id": "atoms:uranium",
+  "name": "Uranium",
+  "nowns": "U",
+  "molar_mass": 238.0289,
+  "state": "solid",
+  "melting_point": 1132.0,
+  "boiling_point": 4131.0,
+  "radioactive": true,
+  "toxic": true,
+  "flammable": false
+}
