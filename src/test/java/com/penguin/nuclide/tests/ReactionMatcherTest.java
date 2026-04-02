@@ -19,13 +19,13 @@ class ReactionMatcherTest {
                 "nuclide:water_formation",
                 "Water Formation",
                 List.of(
-                        new ReactionParticipant("molecules:hydrogen_gas", 2),
-                        new ReactionParticipant("molecules:oxygen_gas", 1)
+                        ReactionParticipant.species("molecules:hydrogen_gas", 2),
+                        ReactionParticipant.species("molecules:oxygen_gas", 1)
                 ),
                 List.of(
-                        new ReactionParticipant("molecules:water", 2)
+                        ReactionParticipant.species("molecules:water", 2)
                 ),
-                new ReactionConditions(null, null, false, null),
+                new ReactionConditions(null, null, false, null, null, null),
                 40
         );
     }
@@ -35,13 +35,13 @@ class ReactionMatcherTest {
                 "nuclide:ignition_test",
                 "Ignition Test",
                 List.of(
-                        new ReactionParticipant("molecules:hydrogen_gas", 2),
-                        new ReactionParticipant("molecules:oxygen_gas", 1)
+                        ReactionParticipant.species("molecules:hydrogen_gas", 2),
+                        ReactionParticipant.species("molecules:oxygen_gas", 1)
                 ),
                 List.of(
-                        new ReactionParticipant("molecules:water", 2)
+                        ReactionParticipant.species("molecules:water", 2)
                 ),
-                new ReactionConditions(300.0, null, true, null),
+                new ReactionConditions(300.0, null, true, null, null, null),
                 40
         );
     }
@@ -51,13 +51,13 @@ class ReactionMatcherTest {
                 "nuclide:catalyst_test",
                 "Catalyst Test",
                 List.of(
-                        new ReactionParticipant("atoms:sodium", 1),
-                        new ReactionParticipant("atoms:chlorine", 1)
+                        ReactionParticipant.species("atoms:sodium", 1),
+                        ReactionParticipant.species("atoms:chlorine", 1)
                 ),
                 List.of(
-                        new ReactionParticipant("molecules:sodium_chloride", 1)
+                        ReactionParticipant.species("molecules:sodium_chloride", 1)
                 ),
-                new ReactionConditions(null, null, false, "atoms:platinum"),
+                new ReactionConditions(null, null, false, "atoms:platinum", null, null),
                 20
         );
     }
@@ -98,7 +98,7 @@ class ReactionMatcherTest {
                 "molecules:oxygen_gas", 1
         );
 
-        ReactionContext context = new ReactionContext(100.0, true);
+        ReactionContext context = new ReactionContext(100.0, true, 1.0);
 
         assertFalse(ReactionMatcher.matches(heatedSparkReaction(), available, context));
     }
@@ -110,7 +110,7 @@ class ReactionMatcherTest {
                 "molecules:oxygen_gas", 1
         );
 
-        ReactionContext context = new ReactionContext(500.0, false);
+        ReactionContext context = new ReactionContext(500.0, false, 1.0);
 
         assertFalse(ReactionMatcher.matches(heatedSparkReaction(), available, context));
     }
@@ -122,7 +122,7 @@ class ReactionMatcherTest {
                 "molecules:oxygen_gas", 1
         );
 
-        ReactionContext context = new ReactionContext(500.0, true);
+        ReactionContext context = new ReactionContext(500.0, true, 1.0);
 
         assertTrue(ReactionMatcher.matches(heatedSparkReaction(), available, context));
     }

@@ -4,11 +4,17 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.penguin.nuclide.data.NuclideDataLoader;
 import com.penguin.nuclide.data.SpeciesDefinition;
+import com.penguin.nuclide.reaction.ReactionConditions;
+import com.penguin.nuclide.tag.SpeciesTagDefinition;
+import com.penguin.nuclide.tag.SpeciesTagDataLoader;
 import com.penguin.nuclide.reaction.ReactionDataLoader;
 import com.penguin.nuclide.reaction.ReactionDefinition;
 import com.penguin.nuclide.reaction.ReactionExecutor;
 import com.penguin.nuclide.reaction.ReactionMatcher;
 import com.penguin.nuclide.reaction.ReactionParticipant;
+import com.penguin.nuclide.reaction.ReactionSearcher;
+
+
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -84,7 +90,7 @@ public final class ReactionCommandDispatcher {
                                                         return 0;
                                                     }
 
-                                                    boolean matches = ReactionMatcher.matches(reaction, inventory);
+                                                    boolean matches = ReactionMatcher.matchesSpeciesOnly(reaction, inventory);
 
                                                     if (matches) {
                                                         context.getSource().sendFeedback(
@@ -150,6 +156,54 @@ public final class ReactionCommandDispatcher {
 
                                                     return 1;
                                                 }))))
+                        .then(literal("search")
+                            .then(argument("inventory", StringArgumentType.greedyString())
+                                .executes(context -> {
+                                    String inventoryText = StringArgumentType.getString(context, "inventory");
+
+                                    Map<String, Integer> inventory;
+                                    try {
+                                        inventory = parseInventory(inventoryText);
+                                    } catch (IllegalArgumentException e) {
+                                        context.getSource().sendError(Text.of(e.getMessage()));
+                                        return 0;
+                                    }
+
+                                    java.util.List<ReactionDefinition> matches =
+                                            ReactionSearcher.findMatches(
+                                                    ReactionDataLoader.REACTIONS.values(),
+                                                    inventory,
+                                                    false
+                                            );
+
+                                    if (matches.isEmpty()) {
+                                        context.getSource().sendError(Text.of(
+                                                "No matching reactions for inventory: " + formatInventory(inventory)
+                                        ));
+                                        return 0;
+                                    }
+
+                                    context.getSource().sendFeedback(
+                                            () -> Text.of("Matching reactions: " + matches.size()),
+                                            false
+                                    );
+
+                                    for (ReactionDefinition reaction : matches) {
+                                        context.getSource().sendFeedback(
+                                                () -> Text.of(
+                                                        "- " + reaction.id() +
+                                                        " \n| name=" + reaction.name() +
+                                                        " \n| inputs=" + formatParticipants(reaction.inputs()) +
+                                                        " \n| outputs=" + formatParticipants(reaction.outputs()) +
+                                                        " \n| conditions=" + formatConditions(reaction.conditions()) +
+                                                        " \n| duration=" + reaction.durationTicks() + " ticks"
+                                                ),
+                                                false
+                                        );
+                                    }
+
+                                    return matches.size();
+                                })))
         );
     }
 
@@ -198,10 +252,29 @@ public final class ReactionCommandDispatcher {
         StringJoiner joiner = new StringJoiner(", ");
 
         for (ReactionParticipant input : reaction.inputs()) {
-            int available = availableSpecies.getOrDefault(input.speciesId(), 0);
-            if (available < input.count()) {
-                int missing = input.count() - available;
-                joiner.add(input.speciesId() + " need " + input.count() + ", have " + available + ", missing " + missing);
+            if (input.isSpecies()) {
+                int available = availableSpecies.getOrDefault(input.speciesId(), 0);
+                if (available < input.count()) {
+                    int missing = input.count() - available;
+                    joiner.add(input.speciesId() + " need " + input.count() + ", have " + available + ", missing " + missing);
+                }
+            } else if (input.isTag()) {
+                SpeciesTagDefinition tag = SpeciesTagDataLoader.TAGS.getById(input.tagId());
+                boolean satisfied = false;
+
+                if (tag != null) {
+                    for (String speciesId : tag.values()) {
+                        int available = availableSpecies.getOrDefault(speciesId, 0);
+                        if (available >= input.count()) {
+                            satisfied = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!satisfied) {
+                    joiner.add("#" + input.tagId() + " need " + input.count() + " from one matching species");
+                }
             }
         }
 
@@ -213,11 +286,17 @@ public final class ReactionCommandDispatcher {
         StringJoiner joiner = new StringJoiner(", ");
 
         for (ReactionParticipant participant : participants) {
-            SpeciesDefinition species = NuclideDataLoader.SPECIES.getById(participant.speciesId());
-            if (species != null) {
-                joiner.add(participant.count() + "x " + participant.speciesId() + " (" + species.name() + ")");
+            if (participant.isSpecies()) {
+                SpeciesDefinition species = NuclideDataLoader.SPECIES.getById(participant.speciesId());
+                if (species != null) {
+                    joiner.add(participant.count() + "x " + participant.speciesId() + " (" + species.name() + ")");
+                } else {
+                    joiner.add(participant.count() + "x " + participant.speciesId());
+                }
+            } else if (participant.isTag()) {
+                joiner.add(participant.count() + "x #" + participant.tagId());
             } else {
-                joiner.add(participant.count() + "x " + participant.speciesId());
+                joiner.add(participant.count() + "x <invalid participant>");
             }
         }
 
@@ -241,5 +320,37 @@ public final class ReactionCommandDispatcher {
         }
 
         return joiner.toString();
+    }
+
+    private static String formatConditions(ReactionConditions conditions) {
+        if (conditions == null) {
+            return "none";
+        }
+
+        StringJoiner joiner = new StringJoiner(", ");
+
+        if (conditions.minTemperature() != null) {
+            joiner.add("min_temperature=" + conditions.minTemperature());
+        }
+
+        if (conditions.maxTemperature() != null) {
+            joiner.add("max_temperature=" + conditions.maxTemperature());
+        }
+
+        if (conditions.requiresSpark()) {
+            joiner.add("requires_spark=true");
+        }
+
+        if (conditions.hasCatalyst()) {
+            SpeciesDefinition catalyst = NuclideDataLoader.SPECIES.getById(conditions.catalystSpeciesId());
+            if (catalyst != null) {
+                joiner.add("catalyst=" + conditions.catalystSpeciesId() + " (" + catalyst.name() + ")");
+            } else {
+                joiner.add("catalyst=" + conditions.catalystSpeciesId());
+            }
+        }
+
+        String result = joiner.toString();
+        return result.isEmpty() ? "none" : result;
     }
 }

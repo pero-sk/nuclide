@@ -238,3 +238,103 @@ Result:
 ```text
 CO.CN
 ```
+
+# Tags
+
+Nuclide provides species tags so reactions can refer to groups of species instead of only exact species ids.
+
+Tags make reactions more flexible and extensible, especially for addon content.
+
+Unlike most other Nuclide data, tag files do not need to live only under `data/nuclide/`. Nuclide collects tag definitions from:
+
+data/\<namespace\>/tags/species/
+
+for all available namespaces.
+
+### How are tags identified?
+
+A tag’s identity is defined by its `id` field inside the JSON, not by its file path.
+
+The file path only determines that the file will be discovered as a tag definition.
+
+Example:
+
+data/myaddon/tags/species/carbon_any.json
+
+could define either:
+
+- `myaddon:carbon_any`
+- or `nuclide:carbon_any`
+
+depending on the JSON contents.
+
+### Tag file format
+
+A tag file contains:
+
+- an `id` field for the tag id
+- a `values` array of species ids
+
+Example:
+
+```json
+{
+  "id": "nuclide:carbon_any",
+  "values": [
+    "atoms:carbon",
+    "atoms:carbon_14"
+  ]
+}
+```
+
+### Which namespace should I use?
+
+If you want a tag that is specific to your addon, use your addon’s namespace.
+
+Example:
+
+- `myaddon:custom_fuel`
+
+If you want to contribute to a shared Nuclide tag that other addons can also use, use the `nuclide:` namespace.
+
+Example:
+
+- `nuclide:carbon_any`
+
+This means an addon may define tags under its own `data/<addon>/tags/species/` path while still contributing to a shared `nuclide:*` tag, as long as the JSON `id` uses the `nuclide:` namespace.
+
+### How do I add onto a built-in tag?
+
+Nuclide does not treat any single tag file as the one source of truth for a tag.
+
+Instead, tag definitions are merged by tag id.
+
+That means if your addon provides a tag file whose `id` matches a built-in Nuclide tag id, both sets of values are combined.
+
+For example, if Nuclide defines:
+
+```json
+{
+  "id": "nuclide:carbon_any",
+  "values": [
+    "atoms:carbon",
+    "atoms:carbon_14"
+  ]
+}
+```
+
+and your addon defines:
+
+```json
+{
+  "id": "nuclide:carbon_any",
+  "values": [
+    "atoms:carbon_13"
+  ]
+}
+```
+
+then the final `nuclide:carbon_any` tag will contain the union of all listed species.
+
+Any reaction using that tag will accept all contributed species.
+

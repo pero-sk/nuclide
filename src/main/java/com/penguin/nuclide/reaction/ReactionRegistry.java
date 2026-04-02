@@ -38,4 +38,5 @@ public final class ReactionRegistry {
     public Collection<ReactionDefinition> values() {
         return Collections.unmodifiableCollection(byId.values());
     }
+
 }

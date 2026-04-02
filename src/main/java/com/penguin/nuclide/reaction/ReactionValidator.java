@@ -1,6 +1,7 @@
 package com.penguin.nuclide.reaction;
 
 import com.penguin.nuclide.data.NuclideDataLoader;
+import com.penguin.nuclide.tag.SpeciesTagDataLoader;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,30 +40,40 @@ public final class ReactionValidator {
         Set<String> seen = new HashSet<>();
 
         for (ReactionParticipant participant : participants) {
-            if (participant.speciesId().isBlank()) {
-                throw new IllegalStateException(
-                        "Reaction '" + reaction.id() + "' has blank " + side + " species id"
-                );
-            }
-
             if (participant.count() <= 0) {
                 throw new IllegalStateException(
-                        "Reaction '" + reaction.id() + "' has non-positive " + side +
-                        " count for species '" + participant.speciesId() + "'"
+                        "Reaction '" + reaction.id() + "' has non-positive " + side + " count"
                 );
             }
 
-            if (!NuclideDataLoader.SPECIES.containsId(participant.speciesId())) {
+            if (participant.isSpecies() == participant.isTag()) {
                 throw new IllegalStateException(
-                        "Reaction '" + reaction.id() + "' references unknown " + side +
-                        " species '" + participant.speciesId() + "'"
+                        "Reaction '" + reaction.id() + "' must define exactly one of species or tag for a " + side
                 );
             }
 
-            if (!seen.add(participant.speciesId())) {
+            String key;
+            if (participant.isSpecies()) {
+                if (!NuclideDataLoader.SPECIES.containsId(participant.speciesId())) {
+                    throw new IllegalStateException(
+                            "Reaction '" + reaction.id() + "' references unknown " + side +
+                                    " species '" + participant.speciesId() + "'"
+                    );
+                }
+                key = "species:" + participant.speciesId();
+            } else {
+                if (!SpeciesTagDataLoader.TAGS.containsId(participant.tagId())) {
+                    throw new IllegalStateException(
+                            "Reaction '" + reaction.id() + "' references unknown " + side +
+                                    " tag '" + participant.tagId() + "'"
+                    );
+                }
+                key = "tag:" + participant.tagId();
+            }
+
+            if (!seen.add(key)) {
                 throw new IllegalStateException(
-                        "Reaction '" + reaction.id() + "' contains duplicate " + side +
-                        " species '" + participant.speciesId() + "'"
+                        "Reaction '" + reaction.id() + "' contains duplicate " + side + " participant '" + key + "'"
                 );
             }
         }

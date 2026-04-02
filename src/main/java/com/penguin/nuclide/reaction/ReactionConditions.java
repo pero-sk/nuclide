@@ -1,5 +1,6 @@
 package com.penguin.nuclide.reaction;
 
+import com.penguin.nuclide.atomic.StateType;
 
 public final class ReactionConditions {
     private final Double minTemperature;
@@ -7,16 +8,23 @@ public final class ReactionConditions {
     private final boolean requiresSpark;
     private final String catalystSpeciesId;
 
+    private final Double minPressure;
+    private final Double maxPressure;
+
     public ReactionConditions(
             Double minTemperature,
             Double maxTemperature,
             boolean requiresSpark,
-            String catalystSpeciesId
+            String catalystSpeciesId,
+            Double minPressure,
+            Double maxPressure
     ) {
         this.minTemperature = minTemperature;
         this.maxTemperature = maxTemperature;
         this.requiresSpark = requiresSpark;
         this.catalystSpeciesId = catalystSpeciesId;
+        this.minPressure = minPressure;
+        this.maxPressure = maxPressure;
     }
 
     public Double minTemperature() {
@@ -41,6 +49,14 @@ public final class ReactionConditions {
 
     public boolean hasCatalyst() {
         return catalystSpeciesId != null && !catalystSpeciesId.isBlank();
+    }
+
+    public Double minPressure() {
+        return minPressure;
+    }
+
+    public Double maxPressure() {
+        return maxPressure;
     }
 
     @Override

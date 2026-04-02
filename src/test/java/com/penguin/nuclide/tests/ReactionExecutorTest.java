@@ -18,13 +18,13 @@ class ReactionExecutorTest {
                 "nuclide:water_formation",
                 "Water Formation",
                 List.of(
-                        new ReactionParticipant("molecules:hydrogen_gas", 2),
-                        new ReactionParticipant("molecules:oxygen_gas", 1)
+                        ReactionParticipant.species("molecules:hydrogen_gas", 2),
+                        ReactionParticipant.species("molecules:oxygen_gas", 1)
                 ),
                 List.of(
-                        new ReactionParticipant("molecules:water", 2)
+                        ReactionParticipant.species("molecules:water", 2)
                 ),
-                new ReactionConditions(null, null, false, null),
+                new ReactionConditions(null, null, false, null, null, null),
                 40
         );
     }

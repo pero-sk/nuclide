@@ -1,6 +1,7 @@
 package com.penguin.nuclide.reaction;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,13 +17,16 @@ public final class ReactionExecutor {
         Objects.requireNonNull(availableSpecies, "availableSpecies");
 
         if (!ReactionMatcher.matches(reaction, availableSpecies)) {
-            throw new IllegalArgumentException("Reaction cannot be executed: insufficient species");
+            throw new IllegalArgumentException("Reaction cannot be executed: insufficient species or unmet conditions");
         }
+
+        List<ResolvedReactionParticipant> resolvedInputs =
+                ReactionResolver.resolveInputs(reaction, availableSpecies);
 
         Map<String, Integer> updatedSpecies = new HashMap<>(availableSpecies);
 
-        for (ReactionParticipant input : reaction.inputs()) {
-            String speciesId = input.speciesId();
+        for (ResolvedReactionParticipant input : resolvedInputs) {
+            String speciesId = input.resolvedSpeciesId();
             int requiredCount = input.count();
 
             int currentCount = updatedSpecies.getOrDefault(speciesId, 0);
@@ -36,6 +40,12 @@ public final class ReactionExecutor {
         }
 
         for (ReactionParticipant output : reaction.outputs()) {
+            if (!output.isSpecies()) {
+                throw new UnsupportedOperationException(
+                        "ReactionExecutor v1 only supports exact-species outputs, not tag outputs"
+                );
+            }
+
             String speciesId = output.speciesId();
             int producedCount = output.count();
 

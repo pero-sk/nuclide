@@ -95,10 +95,25 @@ public final class ReactionDataLoader implements SimpleSynchronousResourceReload
 
         for (int i = 0; i < array.size(); i++) {
             JsonObject obj = array.get(i).getAsJsonObject();
-            String species = JsonHelper.requireString(obj, "species");
+            String species = obj.has("species") && !obj.get("species").isJsonNull()
+                    ? obj.get("species").getAsString()
+                    : null;
+            String tag = obj.has("tag") && !obj.get("tag").isJsonNull()
+                    ? obj.get("tag").getAsString()
+                    : null;
             int count = (int) JsonHelper.requireDouble(obj, "count");
 
-            participants.add(new ReactionParticipant(species, count));
+            if (species != null && tag != null) {
+                throw new IllegalStateException("Reaction participant cannot define both 'species' and 'tag'");
+            }
+
+            if (species == null && tag == null) {
+                throw new IllegalStateException("Reaction participant must define either 'species' or 'tag'");
+            }
+
+            participants.add(species != null
+                    ? ReactionParticipant.species(species, count)
+                    : ReactionParticipant.tag(tag, count));
         }
 
         return participants;
@@ -106,7 +121,7 @@ public final class ReactionDataLoader implements SimpleSynchronousResourceReload
 
     private ReactionConditions parseConditions(JsonObject obj) {
         if (obj == null) {
-            return new ReactionConditions(null, null, false, null);
+            return new ReactionConditions(null, null, false, null, null, null);
         }
 
         Double minTemperature = obj.has("min_temperature") && !obj.get("min_temperature").isJsonNull()
@@ -124,6 +139,14 @@ public final class ReactionDataLoader implements SimpleSynchronousResourceReload
                 ? obj.get("catalyst").getAsString()
                 : null;
 
-        return new ReactionConditions(minTemperature, maxTemperature, requiresSpark, catalyst);
+        Double minPressure = obj.has("min_pressure") && !obj.get("min_pressure").isJsonNull()
+                ? obj.get("min_pressure").getAsDouble()
+                : null;
+
+        Double maxPressure = obj.has("max_pressure") && !obj.get("max_pressure").isJsonNull()
+                ? obj.get("max_pressure").getAsDouble()
+                : null;
+
+        return new ReactionConditions(minTemperature, maxTemperature, requiresSpark, catalyst, minPressure, maxPressure);
     }
 }
