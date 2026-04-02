@@ -7,6 +7,7 @@ import com.penguin.nuclide.atomic.StateType;
 import com.penguin.nuclide.nowns.NownsNormaliser;
 import com.penguin.nuclide.nowns.NownsParser;
 import com.penguin.nuclide.nowns.ParsedMolecule;
+import com.penguin.nuclide.nowns.SpeciesKind;
 import com.penguin.nuclide.nowns.validation.NownsValidator;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
@@ -43,8 +44,8 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
     public void reload(ResourceManager manager) {
         MOLECULES.clear();
 
-        loadFolder(manager, "molecules");
-        loadFolder(manager, "atoms");
+        loadFolder(manager, "molecules", SpeciesKind.MOLECULE);
+        loadFolder(manager, "atoms", SpeciesKind.ATOM);
 
         LOGGER.info("[Nuclide] Loaded {} molecule definitions", MOLECULES.size());
 
@@ -59,7 +60,7 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
         }
     }
 
-    private void loadFolder(ResourceManager manager, String folder) {
+    private void loadFolder(ResourceManager manager, String folder, SpeciesKind kind) {
         Map<Identifier, Resource> resources = manager.findResources(
             folder,
             id -> id.getNamespace().equals(MOD_ID) && id.getPath().endsWith(".json")
@@ -72,7 +73,7 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
             try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
                 JsonObject root = GSON.fromJson(reader, JsonObject.class);
 
-                MoleculeDefinition definition = parseMoleculeDefinition(root, resourceId);
+                MoleculeDefinition definition = parseMoleculeDefinition(root, resourceId, kind);
                 MOLECULES.register(definition);
 
             } catch (Exception e) {
@@ -81,7 +82,7 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
         }
     }
 
-    private MoleculeDefinition parseMoleculeDefinition(JsonObject root, Identifier resourceId) {
+    private MoleculeDefinition parseMoleculeDefinition(JsonObject root, Identifier resourceId, SpeciesKind kind) {
         String id = JsonHelper.requireString(root, "id");
         String name = JsonHelper.optionalString(root, "name", id);
         String rawNowns = JsonHelper.requireString(root, "nowns");
@@ -92,6 +93,7 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
         boolean toxic = JsonHelper.optionalBoolean(root, "toxic", false);
         boolean flammable = JsonHelper.optionalBoolean(root, "flammable", false);
         double molarMass = JsonHelper.requireDouble(root, "molar_mass");
+
 
         ParsedMolecule parsed = NownsParser.parse(rawNowns);
         NownsValidator.validateOrThrow(parsed.molecule());
@@ -111,7 +113,8 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
                 radioactive,
                 toxic,
                 flammable,
-                molarMass
+                molarMass,
+                kind
         );
     }
 }

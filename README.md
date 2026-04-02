@@ -14,7 +14,7 @@ NOWNS is a SMILES-derived notation  with extensions for namespaces, isotope tagg
 
 NOWNS follows standard SMILES syntax and semantics unless explicitly overridden by NOWNS additions.
 
-also unlike standard SMILES, NOWNS does not assume implicit hydrogens; all atoms must be written explicitly.
+Also unlike standard SMILES, NOWNS does not assume implicit hydrogens; all atoms must be written explicitly.
 
 NOWNS also takes heavy inspiration from FROWNS ([check out Destroy's FROWNS here](https://github.com/Petrolpark-Mods/Destroy/wiki/FROWNS))
 
@@ -33,6 +33,18 @@ In NOWNS everything is a molecule, even singular atoms:
 - `nuclide:O`
 
 Single-letter elements may omit brackets; multi-letter elements must use brackets.
+
+## Rings
+
+Ring closures use matching digits:
+
+Cyclohexane:
+C1CCCCC1
+
+Cyclopropane:
+C1CC1
+
+Note: ring normalisation is v1 and may produce non-canonical output for complex polycyclic structures.
 
 ## Additions
 
@@ -71,9 +83,36 @@ Rules:
 - Charge must include a sign (+ or -)
 - Magnitude must be explicit (+1, -1, not just + or -)
 
+### Aromatic atoms
+
+Aromatic atoms use lowercase single-letter symbols:
+
+- `c` carbon (aromatic)
+- `n` nitrogen (aromatic)
+- `o` oxygen (aromatic)
+- `s` sulfur (aromatic)
+- `b` boron (aromatic)
+- `p` phosphorus (aromatic)
+
+Aromatic bonds use `~`.
+
+Benzene: `c1ccccc1`
+Pyridine: `c1ccncc1`
+
+Multi-letter aromatic elements must use brackets: `[se]`, `[te]`
+
+### Limitations
+
+- Implicit hydrogens: not supported. All atoms must be explicit.
+- Fractional charges: not supported. Charges must be non-zero integers.
+- Multi-digit ring closures (%10, %11): not supported. Use digits 1-9 only.
+- Stereochemistry (@, @@, /, \\): reserved for a future version.
+- Full canonical graph normalisation for cyclic structures: v1 produces
+  deterministic but not fully canonical output for rings.
+
 # NOWNS normalisation
 
-After a NOWNS string has been parsed, it is normalised.
+After a NOWNS string has been parsed, it is normalised. For datapack authors, you don't need to care about normalisation as this section is for modders.
 
 ### Scope
 

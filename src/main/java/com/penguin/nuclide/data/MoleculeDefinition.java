@@ -1,6 +1,7 @@
 package com.penguin.nuclide.data;
 
 import com.penguin.nuclide.nowns.ParsedMolecule;
+import com.penguin.nuclide.nowns.SpeciesKind;
 import com.penguin.nuclide.atomic.Molecule;
 import com.penguin.nuclide.atomic.StateType;
 
@@ -24,6 +25,9 @@ public final class MoleculeDefinition {
     private final boolean flammable;
     private final double molarMass;
 
+    // kind
+    private final SpeciesKind kind;
+
     public MoleculeDefinition(
             String id,
             String name,
@@ -38,7 +42,8 @@ public final class MoleculeDefinition {
             boolean radioactive,
             boolean toxic,
             boolean flammable,
-            double molarMass
+            double molarMass,
+            SpeciesKind kind
     ) {
         this.id = Objects.requireNonNull(id);
         this.name = Objects.requireNonNull(name);
@@ -54,6 +59,7 @@ public final class MoleculeDefinition {
         this.toxic = toxic;
         this.flammable = flammable;
         this.molarMass = molarMass;
+        this.kind = Objects.requireNonNull(kind);
     }
 
     public String id() {
@@ -110,6 +116,10 @@ public final class MoleculeDefinition {
 
     public double molarMass() {
         return molarMass;
+    }
+
+    public SpeciesKind kind() {
+        return kind;
     }
 
     @Override

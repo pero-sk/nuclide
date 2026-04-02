@@ -256,7 +256,7 @@ Uranium-238 atom:
 [U:238]
 
 Calcium chloride:
-[Ca^+2].[Cl^-1].[Cl^-1]
+NownsNorm[Ca^+2]([Cl^-1])[Cl^-1]aliser
 
 ---
 
