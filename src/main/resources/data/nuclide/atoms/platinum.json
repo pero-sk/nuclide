@@ -1,0 +1,12 @@
+{
+  "id": "atoms:platinum",
+  "name": "Platinum",
+  "nowns": "[Pt]",
+  "molar_mass": 195.084,
+  "state": "solid",
+  "melting_point": 1768.3,
+  "boiling_point": 3825.0,
+  "radioactive": false,
+  "toxic": false,
+  "flammable": false
+}
