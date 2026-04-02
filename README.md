@@ -1,3 +1,7 @@
+# Nuclide
+
+This mod adds atomic chemistry and simulation to Minecraft. It mainly focuses on atoms but also implements EM waves.
+
 # NOWNS
 
 ## Acronym
