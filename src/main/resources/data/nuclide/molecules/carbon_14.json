@@ -1,0 +1,12 @@
+{
+  "id": "atoms:carbon_14",
+  "name": "Carbon-14",
+  "nowns": "[C:14]",
+  "molar_mass": 14.003,
+  "state": "solid",
+  "melting_point": 3550.0,
+  "boiling_point": 4827.0,
+  "radioactive": true,
+  "toxic": false,
+  "flammable": true
+}

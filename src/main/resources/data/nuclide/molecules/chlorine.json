@@ -1,0 +1,12 @@
+{
+  "id": "atoms:chlorine",
+  "name": "Chlorine",
+  "nowns": "[Cl]",
+  "molar_mass": 35.45,
+  "state": "gas",
+  "melting_point": -101.5,
+  "boiling_point": -34.04,
+  "radioactive": false,
+  "toxic": true,
+  "flammable": false
+}

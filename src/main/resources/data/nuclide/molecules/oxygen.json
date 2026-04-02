@@ -1,0 +1,12 @@
+{
+  "id": "atoms:oxygen",
+  "name": "Oxygen",
+  "nowns": "O",
+  "molar_mass": 15.999,
+  "state": "gas",
+  "melting_point": -218.79,
+  "boiling_point": -182.95,
+  "radioactive": false,
+  "toxic": false,
+  "flammable": false
+}

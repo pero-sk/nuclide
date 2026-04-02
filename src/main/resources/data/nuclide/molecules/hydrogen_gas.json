@@ -1,0 +1,12 @@
+{
+  "id": "molecules:hydrogen_gas",
+  "name": "Hydrogen",
+  "nowns": "HH",
+  "molar_mass": 2.016,
+  "state": "gas",
+  "melting_point": -259.16,
+  "boiling_point": -252.87,
+  "radioactive": false,
+  "toxic": false,
+  "flammable": true
+}

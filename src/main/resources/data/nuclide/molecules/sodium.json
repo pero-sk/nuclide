@@ -1,0 +1,12 @@
+{
+  "id": "atoms:sodium",
+  "name": "Sodium",
+  "nowns": "[Na]",
+  "molar_mass": 22.990,
+  "state": "solid",
+  "melting_point": 97.72,
+  "boiling_point": 883.0,
+  "radioactive": false,
+  "toxic": false,
+  "flammable": true
+}
