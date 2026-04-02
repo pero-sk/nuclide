@@ -1,5 +1,5 @@
 {
-  "id": "minecraft:water",
+  "id": "molecules:water",
   "name": "Water",
   "nowns": "[H]O[H]",
   "molar_mass": 18.015,
