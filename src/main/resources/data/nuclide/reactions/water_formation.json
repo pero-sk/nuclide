@@ -1,0 +1,17 @@
+{
+  "id": "nuclide:water_formation",
+  "name": "Water Formation",
+  "inputs": [
+    { "species": "molecules:hydrogen_gas", "count": 2 },
+    { "species": "molecules:oxygen_gas", "count": 1 }
+  ],
+  "outputs": [
+    { "species": "molecules:water", "count": 2 }
+  ],
+  "conditions": {
+    "min_temperature": 300.0,
+    "requires_spark": true,
+    "catalyst": null
+  },
+  "duration": 40
+}

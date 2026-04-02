@@ -81,6 +81,24 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
         }
     }
 
+    private void validateSpeciesKind(ParsedMolecule parsed, SpeciesKind kind, String id) {
+        int atomCount = parsed.molecule().atoms().size();
+        int bondCount = parsed.molecule().bonds().size();
+
+        if (kind == SpeciesKind.ATOM) {
+            if (atomCount != 1) {
+                throw new IllegalStateException(
+                        "Species '" + id + "' is in atoms/ but contains " + atomCount + " atoms"
+                );
+            }
+            if (bondCount != 0) {
+                throw new IllegalStateException(
+                        "Species '" + id + "' is in atoms/ but contains " + bondCount + " bonds"
+                );
+            }
+        }
+    }
+
     private SpeciesDefinition parseSpeciesDefinition(JsonObject root, Identifier resourceId, SpeciesKind kind) {
         String id = JsonHelper.requireString(root, "id");
         String name = JsonHelper.optionalString(root, "name", id);
@@ -95,7 +113,11 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
 
 
         ParsedMolecule parsed = NownsParser.parse(rawNowns);
+
+        validateSpeciesKind(parsed, kind, id);
+
         NownsValidator.validateOrThrow(parsed.molecule());
+
         String normalized = NownsNormaliser.normalise(parsed);
 
         return new SpeciesDefinition(

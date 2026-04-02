@@ -1,0 +1,15 @@
+{
+  "id": "nuclide:salt_formation",
+  "name": "Sodium Chloride Formation",
+  "inputs": [
+    { "species": "atoms:sodium", "count": 1 },
+    { "species": "atoms:chlorine", "count": 1 }
+  ],
+  "outputs": [
+    { "species": "molecules:sodium_chloride", "count": 1 }
+  ],
+  "conditions": {
+    "catalyst": null
+  },
+  "duration": 20
+}
