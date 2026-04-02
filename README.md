@@ -6,11 +6,13 @@ NOWNS stands for Nuclide Open Way to Notate Species
 
 ## What is it?
 
-NOWNS is a SMILES-derived notation with extensions for namespaces, isotope tagging, and charge representation.
+NOWNS is a SMILES-derived notation  with extensions for namespaces, isotope tagging, and charge representation.
 
 NOWNS follows standard SMILES syntax and semantics unless explicitly overridden by NOWNS additions.
 
 also unlike standard SMILES, NOWNS does not assume implicit hydrogens; all atoms must be written explicitly.
+
+NOWNS also takes heavy inspiration from FROWNS ([check out Destroy's FROWNS here](https://github.com/Petrolpark-Mods/Destroy/wiki/FROWNS))
 
 ## Structure
 
