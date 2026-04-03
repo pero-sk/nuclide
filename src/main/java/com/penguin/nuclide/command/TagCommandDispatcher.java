@@ -17,7 +17,8 @@ public final class TagCommandDispatcher {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
-                literal("tag")
+                literal("nuclide")
+                .then(literal("tag")
                         .then(literal("fromtag")
                             .then(argument("id", IdentifierArgumentType.identifier())
                                     .executes(context -> {
@@ -41,10 +42,8 @@ public final class TagCommandDispatcher {
                                                 return 0;
                                             }
                                         }
-                                    )
                             )
 
-                        )
-            );
+                        ))));
     }
 }

@@ -17,7 +17,8 @@ public final class SpeciesCommandDispatcher {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
-                literal("species")
+                literal("nuclide")
+                .then(literal("species")
                         .then(argument("id", IdentifierArgumentType.identifier())
                                 .executes(context -> {
                                     Identifier id = IdentifierArgumentType.getIdentifier(context, "id");
@@ -42,6 +43,6 @@ public final class SpeciesCommandDispatcher {
                                         return 0;
                                     }
                                 }))
-        );
+        ));
     }
 }

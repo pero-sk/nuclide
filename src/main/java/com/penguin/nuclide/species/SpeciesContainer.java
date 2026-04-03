@@ -5,8 +5,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.mojang.serialization.Codec;
+
 public final class SpeciesContainer {
     private final Map<String, Integer> counts;
+
+    public static final Codec<SpeciesContainer> CODEC =
+            Codec.unboundedMap(Codec.STRING, Codec.INT)
+                    .xmap(SpeciesContainer::new, SpeciesContainer::asMap);
 
     public SpeciesContainer() {
         this.counts = new HashMap<>();

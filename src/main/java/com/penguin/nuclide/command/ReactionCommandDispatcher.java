@@ -32,7 +32,8 @@ public final class ReactionCommandDispatcher {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
-                literal("reaction")
+                literal("nuclide")
+                .then(literal("reaction")
                         .then(literal("find")
                                 .then(argument("id", IdentifierArgumentType.identifier())
                                         .executes(context -> {
@@ -203,7 +204,7 @@ public final class ReactionCommandDispatcher {
 
                                     return matches.size();
                                 })))
-        );
+        ));
     }
 
     private static SpeciesContainer parseInventory(String input) {

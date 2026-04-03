@@ -102,3 +102,13 @@ publishing {
 test {
     useJUnitPlatform()
 }
+
+afterEvaluate {
+    tasks.matching { it.name == 'runClient' }.configureEach { task ->
+        task.jvmArgs(
+            '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005',
+            '-javaagent:C:/Program Files/Eclipse Adoptium/jdk-21.0.8.9-hotspot/lib/hotswap/hotswap-agent-2.0.4-SNAPSHOT.jar=disablePlugin=Log4j2',
+            '--add-opens=java.base/java.lang=ALL-UNNAMED'
+        )
+    }
+}
