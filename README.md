@@ -1,6 +1,7 @@
 # Nuclide
 
-This mod adds atomic chemistry and simulation to Minecraft. It mainly focuses on atoms but also implements EM waves.
+Nuclide is a Fabric mod that adds atomic chemistry, species-based reactions, isotopes, and radiation-related simulation to Minecraft.
+It primarily focuses on atoms and molecules, and also includes electromagnetic wave systems.
 
 # NOWNS
 
@@ -10,7 +11,7 @@ NOWNS stands for Nuclide Open Way to Notate Species
 
 ## What is it?
 
-NOWNS is a SMILES-derived notation  with extensions for namespaces, isotope tagging, and charge representation.
+NOWNS is a SMILES-derived notation with extensions for namespaces, isotope tagging, and charge representation.
 
 NOWNS follows standard SMILES syntax and semantics unless explicitly overridden by NOWNS additions.
 
@@ -22,11 +23,13 @@ NOWNS also takes heavy inspiration from FROWNS ([check out Destroy's FROWNS here
 
 (Charge is not represented using standard SMILES syntax; check [charge](#charge))
 
-First, it follows the main SMILES structure.
+NOWNS follows the core structural rules of SMILES:
 
 Example:
 - Sodium Chloride: `[Na^+1].[Cl^-1]`
-- Ethanol: `CCO`
+- Ethanol: `[H]C([H])([H])C([H])([H])O[H]`
+
+unless explicitly overridden below; [see additions](#additions)
 
 In NOWNS everything is a molecule, even singular atoms:
 - `nuclide:[He]`
@@ -50,12 +53,22 @@ Note: ring normalisation is v1 and may produce non-canonical output for complex 
 
 ### Namespace
 
-NOWNS adds an optional namespace prefix:
+NOWNS adds an optional namespace prefix to notation strings:
 
 - `[Na^+1].[Cl^-1]`
 - `nuclide:[Na^+1].[Cl^-1]`
 
-Unnamespaced molecules default to the `nuclide` namespace, so these are equivalent.
+Unnamespaced NOWNS strings default to the `nuclide:` namespace during parsing and normalisation, so these two NOWNS strings are equivalent.
+
+This applies only to NOWNS notation strings. A NOWNS string is not the same thing as a species id.
+
+For example, a species definition may use:
+
+- species id: `atoms:fluorine`
+- NOWNS string: `[F]`
+- normalised NOWNS: `nuclide:F`
+
+Built-in species ids may use namespaces such as `atoms:` or `molecules:` independently of the namespace used by normalised NOWNS notation.
 
 ### Isotopes
 
@@ -94,8 +107,6 @@ Aromatic atoms use lowercase single-letter symbols:
 - `b` boron (aromatic)
 - `p` phosphorus (aromatic)
 
-Aromatic bonds use `~`.
-
 Benzene: `c1ccccc1`
 Pyridine: `c1ccncc1`
 
@@ -114,6 +125,8 @@ Multi-letter aromatic elements must use brackets: `[se]`, `[te]`
 
 After a NOWNS string has been parsed, it is normalised. For datapack authors, you don't need to care about normalisation as this section is for modders.
 
+During normalisation, an omitted namespace is rendered explicitly as nuclide:
+
 ### Scope
 
 These rules apply only to disconnected components and do not reorder atoms within a connected component.
@@ -124,11 +137,11 @@ NOWNS normalisation v1 guarantees deterministic ordering of disconnected compone
 
 Disconnected components are sorted by:
 
-- descending atomic-number signature
-- Signatures are compared lexicographically (left-to-right).
-- - [8, 6] > [6, 6] because 8 > 6 at index 0
-- then descending component size
-- then rendered string (canonical NOWNS string of the component) ascending
+1. descending atomic-number signature  
+   - signatures are compared lexicographically (left-to-right)
+   - `[8, 6] > [6, 6]` because `8 > 6` at index 0
+2. descending component size
+3. rendered string ascending
 
 ### Atomic-number signature
 

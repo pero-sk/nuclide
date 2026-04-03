@@ -1,0 +1,12 @@
+{
+  "id": "atoms:fluorine",
+  "name": "Fluorine",
+  "nowns": "[F]",
+  "molar_mass": 18.998,
+  "state": "gas",
+  "melting_point": -219.62,
+  "boiling_point": -188.12,
+  "radioactive": false,
+  "toxic": true,
+  "flammable": false
+}

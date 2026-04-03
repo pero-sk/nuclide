@@ -1,0 +1,8 @@
+{
+  "id": "nuclide:uranium_any",
+  "values": [
+    "atoms:uranium",
+    "atoms:uranium_235",
+    "atoms:uranium_238"
+  ]
+}

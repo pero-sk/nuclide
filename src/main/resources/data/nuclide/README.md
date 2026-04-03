@@ -32,7 +32,7 @@ A minimal molecule file looks like this:
 {
   "id": "molecules:water",
   "name": "Water",
-  "nowns": "[H]O[H]",
+  "nowns": "HOH",
   "molar_mass": 18.015
 }
 
@@ -41,7 +41,7 @@ A more complete file can include additional properties:
 {
   "id": "molecules:water",
   "name": "Water",
-  "nowns": "[H]O[H]",
+  "nowns": "HOH",
   "molar_mass": 18.015,
   "state": "liquid",
   "melting_point": 0.0,
@@ -115,7 +115,7 @@ The NOWNS string describing the molecule structure.
 
 Example:
 
-"nowns": "[H]O[H]"
+"nowns": "HOH"
 
 Nuclide uses explicit NOWNS, which means:
 
@@ -124,7 +124,7 @@ Nuclide uses explicit NOWNS, which means:
 
 So water is:
 
-[H]O[H]
+HOH
 
 not:
 
@@ -241,7 +241,7 @@ Important rules:
 Examples:
 
 Water:
-[H]O[H]
+HOH
 
 Hydrogen gas:
 [H][H]
@@ -349,7 +349,7 @@ If unsure:
 {
   "id": "molecules:water",
   "name": "Water",
-  "nowns": "[H]O[H]",
+  "nowns": "HOH",
   "molar_mass": 18.015,
   "state": "liquid",
   "melting_point": 0.0,
@@ -405,7 +405,7 @@ This is wrong for Nuclide because NOWNS is explicit.
 
 Use:
 
-"nowns": "[H]O[H]"
+"nowns": "HOH"
 
 ---
 
@@ -414,7 +414,7 @@ Use:
 {
   "id": "nuclide:water",
   "name": "Water",
-  "nowns": "[H]O[H]"
+  "nowns": "HOH"
 }
 
 This is wrong for this system.
@@ -430,7 +430,7 @@ Use:
 {
   "id": "minecraft:water",
   "name": "Water",
-  "nowns": "[H]O[H]"
+  "nowns": "HOH"
 }
 
 This is wrong.
@@ -489,15 +489,16 @@ Use:
 
 # Loader expectations
 
-A valid molecule JSON should be able to go through this pipeline:
+`A valid molecule JSON should be able to go through this pipeline:
 
-JSON -> parse NOWNS -> validate -> normalize -> register
+JSON -> parse NOWNS -> validate -> normalise -> register
 
 So a molecule file must have:
 
 - a valid `id`
 - a valid `name`
 - a valid `nowns`
+- a valid `molar_mass`
 
 Everything else can be optional depending on your schema.
 

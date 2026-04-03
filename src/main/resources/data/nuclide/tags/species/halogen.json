@@ -1,0 +1,7 @@
+{
+  "id": "nuclide:halogen",
+  "values": [
+    "atoms:fluorine",
+    "atoms:chlorine"
+  ]
+}
