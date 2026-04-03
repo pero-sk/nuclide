@@ -30,6 +30,10 @@ public final class SpeciesContainer {
         return countOf(speciesId) >= amount;
     }
 
+    public boolean isEmpty() {
+        return counts.isEmpty();
+    }
+
     public void add(String speciesId, int amount) {
         validateSpeciesId(speciesId);
         if (amount < 0) throw new IllegalArgumentException("amount cannot be negative");
