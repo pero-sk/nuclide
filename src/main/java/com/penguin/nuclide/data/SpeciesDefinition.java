@@ -123,7 +123,7 @@ public final class SpeciesDefinition {
 
     @Override
     public String toString() {
-        return "MoleculeDefinition{" +
+        return "SpeciesDefinition{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", rawNowns='" + rawNowns + '\'' +

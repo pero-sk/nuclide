@@ -3,8 +3,9 @@ package com.penguin.nuclide.reaction;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+
+import com.penguin.nuclide.species.SpeciesContainer;
 
 public final class ReactionSearcher {
 
@@ -12,7 +13,7 @@ public final class ReactionSearcher {
 
     public static List<ReactionDefinition> findMatches(
             Iterable<ReactionDefinition> reactions,
-            Map<String, Integer> availableSpecies,
+            SpeciesContainer availableSpecies,
             boolean checkConditions
     ) {
         Objects.requireNonNull(reactions, "reactions");
@@ -36,7 +37,7 @@ public final class ReactionSearcher {
 
     public static List<ReactionDefinition> findMatches(
             Iterable<ReactionDefinition> reactions,
-            Map<String, Integer> availableSpecies,
+            SpeciesContainer availableSpecies,
             ReactionContext context
     ) {
         Objects.requireNonNull(reactions, "reactions");

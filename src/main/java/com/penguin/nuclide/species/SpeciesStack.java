@@ -10,7 +10,7 @@ public final class SpeciesStack {
     private final int count;
 
     public SpeciesStack(String speciesId, int count) {
-        this.speciesId = Objects.requireNonNull(speciesId);
+        this.speciesId = Objects.requireNonNull(speciesId, "speciesId");
         this.count = count;
 
         if (speciesId.isBlank()) {
@@ -31,7 +31,7 @@ public final class SpeciesStack {
     }
 
     public boolean isEmpty() {
-        return count <= 0;
+        return count == 0;
     }
 
     public SpeciesDefinition definition() {
@@ -46,7 +46,8 @@ public final class SpeciesStack {
         if (amount < 0) {
             throw new IllegalArgumentException("grow amount cannot be negative");
         }
-        return new SpeciesStack(speciesId, count + amount);
+        int newCount = Math.addExact(count, amount);
+        return new SpeciesStack(speciesId, newCount);
     }
 
     public SpeciesStack shrink(int amount) {
@@ -70,6 +71,18 @@ public final class SpeciesStack {
 
     public boolean sameSpecies(SpeciesStack other) {
         return other != null && speciesId.equals(other.speciesId);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SpeciesStack that)) return false;
+        return count == that.count && speciesId.equals(that.speciesId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(speciesId, count);
     }
 
     @Override

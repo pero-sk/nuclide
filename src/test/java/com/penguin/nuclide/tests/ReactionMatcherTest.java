@@ -5,6 +5,8 @@ import com.penguin.nuclide.reaction.ReactionContext;
 import com.penguin.nuclide.reaction.ReactionDefinition;
 import com.penguin.nuclide.reaction.ReactionMatcher;
 import com.penguin.nuclide.reaction.ReactionParticipant;
+import com.penguin.nuclide.species.SpeciesContainer;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -69,7 +71,7 @@ class ReactionMatcherTest {
                 "molecules:oxygen_gas", 1
         );
 
-        assertTrue(ReactionMatcher.matches(unconditionalReaction(), available));
+        assertTrue(ReactionMatcher.matches(unconditionalReaction(), new SpeciesContainer(available)));
     }
 
     @Test
@@ -78,7 +80,7 @@ class ReactionMatcherTest {
                 "molecules:hydrogen_gas", 2
         );
 
-        assertFalse(ReactionMatcher.matches(unconditionalReaction(), available));
+        assertFalse(ReactionMatcher.matches(unconditionalReaction(), new SpeciesContainer(available)));
     }
 
     @Test
@@ -88,7 +90,7 @@ class ReactionMatcherTest {
                 "molecules:oxygen_gas", 1
         );
 
-        assertFalse(ReactionMatcher.matches(unconditionalReaction(), available));
+        assertFalse(ReactionMatcher.matches(unconditionalReaction(), new SpeciesContainer(available)));
     }
 
     @Test
@@ -100,7 +102,7 @@ class ReactionMatcherTest {
 
         ReactionContext context = new ReactionContext(100.0, true, 1.0);
 
-        assertFalse(ReactionMatcher.matches(heatedSparkReaction(), available, context));
+        assertFalse(ReactionMatcher.matches(heatedSparkReaction(), new SpeciesContainer(available), context));
     }
 
     @Test
@@ -112,7 +114,7 @@ class ReactionMatcherTest {
 
         ReactionContext context = new ReactionContext(500.0, false, 1.0);
 
-        assertFalse(ReactionMatcher.matches(heatedSparkReaction(), available, context));
+        assertFalse(ReactionMatcher.matches(heatedSparkReaction(), new SpeciesContainer(available), context));
     }
 
     @Test
@@ -124,7 +126,7 @@ class ReactionMatcherTest {
 
         ReactionContext context = new ReactionContext(500.0, true, 1.0);
 
-        assertTrue(ReactionMatcher.matches(heatedSparkReaction(), available, context));
+        assertTrue(ReactionMatcher.matches(heatedSparkReaction(), new SpeciesContainer(available), context));
     }
 
     @Test
@@ -134,7 +136,7 @@ class ReactionMatcherTest {
                 "atoms:chlorine", 1
         );
 
-        assertFalse(ReactionMatcher.matches(catalystReaction(), available, ReactionContext.DEFAULT));
+        assertFalse(ReactionMatcher.matches(catalystReaction(), new SpeciesContainer(available), ReactionContext.DEFAULT));
     }
 
     @Test
@@ -145,6 +147,6 @@ class ReactionMatcherTest {
                 "atoms:platinum", 1
         );
 
-        assertTrue(ReactionMatcher.matches(catalystReaction(), available, ReactionContext.DEFAULT));
+        assertTrue(ReactionMatcher.matches(catalystReaction(), new SpeciesContainer(available), ReactionContext.DEFAULT));
     }
 }

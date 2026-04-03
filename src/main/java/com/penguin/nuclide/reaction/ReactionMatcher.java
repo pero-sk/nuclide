@@ -1,22 +1,20 @@
 package com.penguin.nuclide.reaction;
 
-import com.penguin.nuclide.tag.SpeciesTagDefinition;
-import com.penguin.nuclide.tag.SpeciesTagDataLoader;
-
-import java.util.Map;
 import java.util.Objects;
+
+import com.penguin.nuclide.species.SpeciesContainer;
 
 public final class ReactionMatcher {
 
     private ReactionMatcher() {}
 
-    public static boolean matches(ReactionDefinition reaction, Map<String, Integer> availableSpecies) {
+    public static boolean matches(ReactionDefinition reaction, SpeciesContainer availableSpecies) {
         return matches(reaction, availableSpecies, ReactionContext.DEFAULT);
     }
 
     public static boolean matches(
             ReactionDefinition reaction,
-            Map<String, Integer> availableSpecies,
+            SpeciesContainer availableSpecies,
             ReactionContext context
     ) {
         Objects.requireNonNull(reaction, "reaction");
@@ -50,7 +48,7 @@ public final class ReactionMatcher {
         }
 
         if (conditions.hasCatalyst()) {
-            int catalystCount = availableSpecies.getOrDefault(conditions.catalystSpeciesId(), 0);
+            int catalystCount = availableSpecies.countOf(conditions.catalystSpeciesId());
             if (catalystCount <= 0) {
                 return false;
             }
@@ -61,40 +59,16 @@ public final class ReactionMatcher {
 
     public static boolean matchesSpeciesOnly(
             ReactionDefinition reaction,
-            Map<String, Integer> availableSpecies
+            SpeciesContainer availableSpecies
     ) {
         Objects.requireNonNull(reaction, "reaction");
         Objects.requireNonNull(availableSpecies, "availableSpecies");
 
-        for (ReactionParticipant input : reaction.inputs()) {
-            if (input.isSpecies()) {
-                int availableCount = availableSpecies.getOrDefault(input.speciesId(), 0);
-                if (availableCount < input.count()) {
-                    return false;
-                }
-            } else if (input.isTag()) {
-                SpeciesTagDefinition tag = SpeciesTagDataLoader.TAGS.getById(input.tagId());
-                if (tag == null) {
-                    return false;
-                }
-
-                boolean satisfied = false;
-                for (String speciesId : tag.values()) {
-                    int availableCount = availableSpecies.getOrDefault(speciesId, 0);
-                    if (availableCount >= input.count()) {
-                        satisfied = true;
-                        break;
-                    }
-                }
-
-                if (!satisfied) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+        try {
+            ReactionResolver.resolveInputs(reaction, availableSpecies);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
         }
-
-        return true;
     }
 }

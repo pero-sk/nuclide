@@ -1,0 +1,93 @@
+package com.penguin.nuclide.species;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+public final class SpeciesContainer {
+    private final Map<String, Integer> counts;
+
+    public SpeciesContainer() {
+        this.counts = new HashMap<>();
+    }
+
+    public SpeciesContainer(Map<String, Integer> initial) {
+        Objects.requireNonNull(initial, "initial");
+        this.counts = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : initial.entrySet()) {
+            add(entry.getKey(), entry.getValue());
+        }
+    }
+
+    public int countOf(String speciesId) {
+        validateSpeciesId(speciesId);
+        return counts.getOrDefault(speciesId, 0);
+    }
+
+    public boolean contains(String speciesId, int amount) {
+        if (amount < 0) throw new IllegalArgumentException("amount cannot be negative");
+        return countOf(speciesId) >= amount;
+    }
+
+    public void add(String speciesId, int amount) {
+        validateSpeciesId(speciesId);
+        if (amount < 0) throw new IllegalArgumentException("amount cannot be negative");
+        if (amount == 0) return;
+
+        int current = counts.getOrDefault(speciesId, 0);
+        int updated = Math.addExact(current, amount);
+        counts.put(speciesId, updated);
+    }
+
+    public void add(SpeciesStack stack) {
+        Objects.requireNonNull(stack, "stack");
+        add(stack.speciesId(), stack.count());
+    }
+
+    public void remove(String speciesId, int amount) {
+        validateSpeciesId(speciesId);
+        if (amount < 0) throw new IllegalArgumentException("amount cannot be negative");
+        if (amount == 0) return;
+
+        int current = counts.getOrDefault(speciesId, 0);
+        if (current < amount) {
+            throw new IllegalArgumentException(
+                    "Cannot remove " + amount + " of '" + speciesId + "'; only " + current + " available"
+            );
+        }
+
+        int updated = current - amount;
+        if (updated == 0) {
+            counts.remove(speciesId);
+        } else {
+            counts.put(speciesId, updated);
+        }
+    }
+
+    public void remove(SpeciesStack stack) {
+        Objects.requireNonNull(stack, "stack");
+        remove(stack.speciesId(), stack.count());
+    }
+
+    public List<SpeciesStack> stacks() {
+        return counts.entrySet().stream()
+                .map(e -> new SpeciesStack(e.getKey(), e.getValue()))
+                .toList();
+    }
+
+    public SpeciesContainer copy() {
+        return new SpeciesContainer(counts);
+    }
+
+    public Map<String, Integer> asMap() {
+        return Map.copyOf(counts);
+    }
+
+    private static void validateSpeciesId(String speciesId) {
+        Objects.requireNonNull(speciesId, "speciesId");
+        if (speciesId.isBlank()) {
+            throw new IllegalArgumentException("speciesId cannot be blank");
+        }
+    }
+}

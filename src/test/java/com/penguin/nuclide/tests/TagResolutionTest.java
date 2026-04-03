@@ -6,6 +6,7 @@ import com.penguin.nuclide.reaction.ReactionExecutor;
 import com.penguin.nuclide.reaction.ReactionParticipant;
 import com.penguin.nuclide.reaction.ReactionResolver;
 import com.penguin.nuclide.reaction.ResolvedReactionParticipant;
+import com.penguin.nuclide.species.SpeciesContainer;
 import com.penguin.nuclide.tag.SpeciesTagDataLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,10 +44,10 @@ class TagResolutionTest {
     void resolvesToFirstMatchingSpeciesInTagOrder() {
         List<ResolvedReactionParticipant> resolved = ReactionResolver.resolveInputs(
                 taggedReaction(),
-                Map.of(
+                new SpeciesContainer(Map.of(
                         "atoms:carbon", 1,
                         "atoms:carbon_14", 1
-                )
+                ))
         );
 
         assertEquals(1, resolved.size());
@@ -57,7 +58,7 @@ class TagResolutionTest {
     void resolvesToLaterSpeciesWhenEarlierOneIsUnavailable() {
         List<ResolvedReactionParticipant> resolved = ReactionResolver.resolveInputs(
                 taggedReaction(),
-                Map.of("atoms:carbon_14", 1)
+                new SpeciesContainer(Map.of("atoms:carbon_14", 1))
         );
 
         assertEquals(1, resolved.size());
@@ -66,28 +67,28 @@ class TagResolutionTest {
 
     @Test
     void executorConsumesResolvedTagSpecies() {
-        Map<String, Integer> result = ReactionExecutor.execute(
+        SpeciesContainer result = ReactionExecutor.execute(
                 taggedReaction(),
-                Map.of(
+                new SpeciesContainer(Map.of(
                         "atoms:carbon", 1,
                         "atoms:carbon_14", 1
-                )
+                ))
         );
 
-        assertFalse(result.containsKey("atoms:carbon"));
-        assertEquals(1, result.get("atoms:carbon_14"));
-        assertEquals(1, result.get("atoms:oxygen"));
+        assertFalse(result.asMap().containsKey("atoms:carbon"));
+        assertEquals(1, result.asMap().get("atoms:carbon_14"));
+        assertEquals(1, result.asMap().get("atoms:oxygen"));
     }
 
     @Test
     void executorConsumesLaterResolvedSpeciesWhenNeeded() {
-        Map<String, Integer> result = ReactionExecutor.execute(
+        SpeciesContainer result = ReactionExecutor.execute(
                 taggedReaction(),
-                Map.of("atoms:carbon_14", 1)
+                new SpeciesContainer(Map.of("atoms:carbon_14", 1))
         );
 
-        assertFalse(result.containsKey("atoms:carbon_14"));
-        assertEquals(1, result.get("atoms:oxygen"));
+        assertFalse(result.asMap().containsKey("atoms:carbon_14"));
+        assertEquals(1, result.asMap().get("atoms:oxygen"));
     }
 
     @Test
@@ -95,7 +96,7 @@ class TagResolutionTest {
         assertThrows(IllegalArgumentException.class, () ->
                 ReactionResolver.resolveInputs(
                         taggedReaction(),
-                        Map.of("atoms:sodium", 1)
+                        new SpeciesContainer(Map.of("atoms:sodium", 1))
                 )
         );
     }

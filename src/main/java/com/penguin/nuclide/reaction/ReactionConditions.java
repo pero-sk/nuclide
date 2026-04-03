@@ -1,6 +1,5 @@
 package com.penguin.nuclide.reaction;
 
-import com.penguin.nuclide.atomic.StateType;
 
 public final class ReactionConditions {
     private final Double minTemperature;

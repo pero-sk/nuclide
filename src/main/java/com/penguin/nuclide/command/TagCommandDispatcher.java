@@ -3,7 +3,6 @@ package com.penguin.nuclide.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.penguin.nuclide.tag.SpeciesTagDataLoader;
 import com.penguin.nuclide.tag.SpeciesTagDefinition;
-import com.penguin.nuclide.tag.SpeciesTagRegistry;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;

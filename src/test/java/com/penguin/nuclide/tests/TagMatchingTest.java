@@ -4,6 +4,7 @@ import com.penguin.nuclide.reaction.ReactionConditions;
 import com.penguin.nuclide.reaction.ReactionDefinition;
 import com.penguin.nuclide.reaction.ReactionMatcher;
 import com.penguin.nuclide.reaction.ReactionParticipant;
+import com.penguin.nuclide.species.SpeciesContainer;
 import com.penguin.nuclide.tag.SpeciesTagDataLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ class TagMatchingTest {
 
         Map<String, Integer> available = Map.of("atoms:carbon_14", 1);
 
-        assertTrue(ReactionMatcher.matchesSpeciesOnly(reaction, available));
+        assertTrue(ReactionMatcher.matchesSpeciesOnly(reaction, new SpeciesContainer(available)));
     }
 
     @Test
@@ -52,6 +53,6 @@ class TagMatchingTest {
 
         Map<String, Integer> available = Map.of("atoms:sodium", 1);
 
-        assertFalse(ReactionMatcher.matchesSpeciesOnly(reaction, available));
+        assertFalse(ReactionMatcher.matchesSpeciesOnly(reaction, new SpeciesContainer(available)));
     }
 }

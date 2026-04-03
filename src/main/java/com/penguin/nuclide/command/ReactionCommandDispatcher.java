@@ -13,14 +13,13 @@ import com.penguin.nuclide.reaction.ReactionExecutor;
 import com.penguin.nuclide.reaction.ReactionMatcher;
 import com.penguin.nuclide.reaction.ReactionParticipant;
 import com.penguin.nuclide.reaction.ReactionSearcher;
-
+import com.penguin.nuclide.species.SpeciesContainer;
 
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -82,7 +81,7 @@ public final class ReactionCommandDispatcher {
                                                         return 0;
                                                     }
 
-                                                    Map<String, Integer> inventory;
+                                                    SpeciesContainer inventory;
                                                     try {
                                                         inventory = parseInventory(inventoryText);
                                                     } catch (IllegalArgumentException e) {
@@ -119,7 +118,7 @@ public final class ReactionCommandDispatcher {
                                                         return 0;
                                                     }
 
-                                                    Map<String, Integer> inventory;
+                                                    SpeciesContainer inventory;
                                                     try {
                                                         inventory = parseInventory(inventoryText);
                                                     } catch (IllegalArgumentException e) {
@@ -135,7 +134,7 @@ public final class ReactionCommandDispatcher {
                                                         return 0;
                                                     }
 
-                                                    Map<String, Integer> result = ReactionExecutor.execute(reaction, inventory);
+                                                    SpeciesContainer result = ReactionExecutor.execute(reaction, inventory);
 
                                                     context.getSource().sendFeedback(
                                                             () -> Text.of("Reaction executed: " + reaction.id()),
@@ -161,7 +160,7 @@ public final class ReactionCommandDispatcher {
                                 .executes(context -> {
                                     String inventoryText = StringArgumentType.getString(context, "inventory");
 
-                                    Map<String, Integer> inventory;
+                                    SpeciesContainer inventory;
                                     try {
                                         inventory = parseInventory(inventoryText);
                                     } catch (IllegalArgumentException e) {
@@ -207,7 +206,7 @@ public final class ReactionCommandDispatcher {
         );
     }
 
-    private static Map<String, Integer> parseInventory(String input) {
+    private static SpeciesContainer parseInventory(String input) {
         String trimmed = input.trim();
         if (trimmed.isEmpty()) {
             throw new IllegalArgumentException("Inventory cannot be empty");
@@ -221,7 +220,7 @@ public final class ReactionCommandDispatcher {
             );
         }
 
-        Map<String, Integer> inventory = new LinkedHashMap<>();
+        SpeciesContainer inventory = new SpeciesContainer();
 
         for (int i = 0; i < tokens.length; i += 2) {
             String speciesId = tokens[i];
@@ -242,18 +241,18 @@ public final class ReactionCommandDispatcher {
                 throw new IllegalArgumentException("Count must be positive for species " + speciesId);
             }
 
-            inventory.merge(speciesId, count, Integer::sum);
+            inventory.add(speciesId, count);
         }
 
         return inventory;
     }
 
-    private static String describeMissingRequirements(ReactionDefinition reaction, Map<String, Integer> availableSpecies) {
+    private static String describeMissingRequirements(ReactionDefinition reaction, SpeciesContainer availableSpecies) {
         StringJoiner joiner = new StringJoiner(", ");
 
         for (ReactionParticipant input : reaction.inputs()) {
             if (input.isSpecies()) {
-                int available = availableSpecies.getOrDefault(input.speciesId(), 0);
+                int available = availableSpecies.countOf(input.speciesId());
                 if (available < input.count()) {
                     int missing = input.count() - available;
                     joiner.add(input.speciesId() + " need " + input.count() + ", have " + available + ", missing " + missing);
@@ -264,7 +263,7 @@ public final class ReactionCommandDispatcher {
 
                 if (tag != null) {
                     for (String speciesId : tag.values()) {
-                        int available = availableSpecies.getOrDefault(speciesId, 0);
+                        int available = availableSpecies.countOf(speciesId);
                         if (available >= input.count()) {
                             satisfied = true;
                             break;
@@ -303,14 +302,14 @@ public final class ReactionCommandDispatcher {
         return joiner.toString();
     }
 
-    private static String formatInventory(Map<String, Integer> inventory) {
-        if (inventory.isEmpty()) {
+    private static String formatInventory(SpeciesContainer inventory) {
+        if (inventory.asMap().isEmpty()) {
             return "(empty)";
         }
 
         StringJoiner joiner = new StringJoiner(", ");
 
-        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
+        for (Map.Entry<String, Integer> entry : inventory.asMap().entrySet()) {
             SpeciesDefinition species = NuclideDataLoader.SPECIES.getById(entry.getKey());
             if (species != null) {
                 joiner.add(entry.getValue() + "x " + entry.getKey() + " (" + species.name() + ")");

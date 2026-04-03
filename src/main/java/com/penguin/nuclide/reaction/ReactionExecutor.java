@@ -1,42 +1,43 @@
 package com.penguin.nuclide.reaction;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+
+import com.penguin.nuclide.species.SpeciesContainer;
 
 public final class ReactionExecutor {
 
     private ReactionExecutor() {}
 
-    public static Map<String, Integer> execute(
+    public static SpeciesContainer execute(
             ReactionDefinition reaction,
-            Map<String, Integer> availableSpecies
+            SpeciesContainer availableSpecies
+    ) {
+        return execute(reaction, availableSpecies, ReactionContext.DEFAULT);
+    }
+
+    public static SpeciesContainer execute(
+            ReactionDefinition reaction,
+            SpeciesContainer availableSpecies,
+            ReactionContext context
     ) {
         Objects.requireNonNull(reaction, "reaction");
         Objects.requireNonNull(availableSpecies, "availableSpecies");
+        Objects.requireNonNull(context, "context");
 
-        if (!ReactionMatcher.matches(reaction, availableSpecies)) {
-            throw new IllegalArgumentException("Reaction cannot be executed: insufficient species or unmet conditions");
+        if (!ReactionMatcher.matches(reaction, availableSpecies, context)) {
+            throw new IllegalArgumentException(
+                    "Reaction cannot be executed: insufficient species or unmet conditions"
+            );
         }
 
         List<ResolvedReactionParticipant> resolvedInputs =
                 ReactionResolver.resolveInputs(reaction, availableSpecies);
 
-        Map<String, Integer> updatedSpecies = new HashMap<>(availableSpecies);
+        SpeciesContainer updatedSpecies = availableSpecies.copy();
 
         for (ResolvedReactionParticipant input : resolvedInputs) {
-            String speciesId = input.resolvedSpeciesId();
-            int requiredCount = input.count();
-
-            int currentCount = updatedSpecies.getOrDefault(speciesId, 0);
-            int newCount = currentCount - requiredCount;
-
-            if (newCount <= 0) {
-                updatedSpecies.remove(speciesId);
-            } else {
-                updatedSpecies.put(speciesId, newCount);
-            }
+            updatedSpecies.remove(input.resolvedSpeciesId(), input.count());
         }
 
         for (ReactionParticipant output : reaction.outputs()) {
@@ -46,11 +47,7 @@ public final class ReactionExecutor {
                 );
             }
 
-            String speciesId = output.speciesId();
-            int producedCount = output.count();
-
-            int currentCount = updatedSpecies.getOrDefault(speciesId, 0);
-            updatedSpecies.put(speciesId, currentCount + producedCount);
+            updatedSpecies.add(output.speciesId(), output.count());
         }
 
         return updatedSpecies;

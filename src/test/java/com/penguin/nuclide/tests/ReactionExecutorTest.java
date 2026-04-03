@@ -4,6 +4,8 @@ import com.penguin.nuclide.reaction.ReactionConditions;
 import com.penguin.nuclide.reaction.ReactionDefinition;
 import com.penguin.nuclide.reaction.ReactionExecutor;
 import com.penguin.nuclide.reaction.ReactionParticipant;
+import com.penguin.nuclide.species.SpeciesContainer;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -31,55 +33,64 @@ class ReactionExecutorTest {
 
     @Test
     void executesReactionAndProducesOutputs() {
-        Map<String, Integer> available = Map.of(
+        Map<String, Integer> initial = Map.of(
                 "molecules:hydrogen_gas", 2,
                 "molecules:oxygen_gas", 1
         );
 
-        Map<String, Integer> result = ReactionExecutor.execute(waterFormation(), available);
 
-        assertEquals(1, result.size());
-        assertEquals(2, result.get("molecules:water"));
-        assertFalse(result.containsKey("molecules:hydrogen_gas"));
-        assertFalse(result.containsKey("molecules:oxygen_gas"));
+        SpeciesContainer available = new SpeciesContainer(initial);
+
+        SpeciesContainer result = ReactionExecutor.execute(waterFormation(), available);
+
+        assertEquals(1, result.asMap().size());
+        assertEquals(2, result.asMap().get("molecules:water"));
+        assertFalse(result.asMap().containsKey("molecules:hydrogen_gas"));
+        assertFalse(result.asMap().containsKey("molecules:oxygen_gas"));
     }
 
     @Test
     void preservesUnrelatedSpecies() {
-        Map<String, Integer> available = Map.of(
+        Map<String, Integer> init = Map.of(
                 "molecules:hydrogen_gas", 2,
                 "molecules:oxygen_gas", 1,
                 "atoms:sodium", 3
         );
 
-        Map<String, Integer> result = ReactionExecutor.execute(waterFormation(), available);
+        SpeciesContainer available = new SpeciesContainer(init);
 
-        assertEquals(2, result.size());
-        assertEquals(2, result.get("molecules:water"));
-        assertEquals(3, result.get("atoms:sodium"));
+        SpeciesContainer result = ReactionExecutor.execute(waterFormation(), available);
+
+        assertEquals(2, result.asMap().size());
+        assertEquals(2, result.asMap().get("molecules:water"));
+        assertEquals(3, result.asMap().get("atoms:sodium"));
     }
 
     @Test
     void reducesCountsInsteadOfRemovingWhenExtrasRemain() {
-        Map<String, Integer> available = Map.of(
+        Map<String, Integer> init = Map.of(
                 "molecules:hydrogen_gas", 4,
                 "molecules:oxygen_gas", 2
         );
 
-        Map<String, Integer> result = ReactionExecutor.execute(waterFormation(), available);
+        SpeciesContainer available = new SpeciesContainer(init);
 
-        assertEquals(3, result.size());
-        assertEquals(2, result.get("molecules:hydrogen_gas"));
-        assertEquals(1, result.get("molecules:oxygen_gas"));
-        assertEquals(2, result.get("molecules:water"));
+        SpeciesContainer result = ReactionExecutor.execute(waterFormation(), available);
+
+        assertEquals(3, result.asMap().size());
+        assertEquals(2, result.asMap().get("molecules:hydrogen_gas"));
+        assertEquals(1, result.asMap().get("molecules:oxygen_gas"));
+        assertEquals(2, result.asMap().get("molecules:water"));
     }
 
     @Test
     void throwsWhenReactionDoesNotMatch() {
-        Map<String, Integer> available = Map.of(
+        Map<String, Integer> init = Map.of(
                 "molecules:hydrogen_gas", 1,
                 "molecules:oxygen_gas", 1
         );
+
+        SpeciesContainer available = new SpeciesContainer(init);
 
         assertThrows(IllegalArgumentException.class, () ->
                 ReactionExecutor.execute(waterFormation(), available)
@@ -88,15 +99,17 @@ class ReactionExecutorTest {
 
     @Test
     void doesNotMutateOriginalMap() {
-        Map<String, Integer> available = Map.of(
+        Map<String, Integer> init = Map.of(
                 "molecules:hydrogen_gas", 2,
                 "molecules:oxygen_gas", 1
         );
 
-        Map<String, Integer> result = ReactionExecutor.execute(waterFormation(), available);
+        SpeciesContainer available = new SpeciesContainer(init);
 
-        assertEquals(2, available.get("molecules:hydrogen_gas"));
-        assertEquals(1, available.get("molecules:oxygen_gas"));
+        SpeciesContainer result = ReactionExecutor.execute(waterFormation(), available);
+
+        assertEquals(2, available.asMap().get("molecules:hydrogen_gas"));
+        assertEquals(1, available.asMap().get("molecules:oxygen_gas"));
 
         assertNotSame(available, result);
     }
