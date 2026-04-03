@@ -3,7 +3,7 @@
   "name": "Hydrogen",
   "nowns": "H",
   "molar_mass": 1.008,
-  "state": "gas",
+  "default_state": "gas",
   "melting_point": -259.16,
   "boiling_point": -252.87,
   "radioactive": false,

@@ -3,10 +3,18 @@
   "name": "Calcium Chloride",
   "nowns": "[Ca^+2]([Cl^-1])[Cl^-1]",
   "molar_mass": 110.98,
-  "state": "solid",
+  "default_state": "solid",
   "melting_point": 772.0,
   "boiling_point": 1935.0,
   "radioactive": false,
   "toxic": false,
-  "flammable": false
+  "flammable": false,
+  "representation": {
+    "gas": null,
+    "liquid": null,
+    "solid": {
+      "type": "block",
+      "id": "nuclide:calcium_chloride_block"
+    }
+  }
 }

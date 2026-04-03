@@ -103,7 +103,7 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
         String id = JsonHelper.requireString(root, "id");
         String name = JsonHelper.optionalString(root, "name", id);
         String rawNowns = JsonHelper.requireString(root, "nowns");
-        StateType state = JsonHelper.optionalEnum(root, "state", StateType.class, StateType.SOLID);
+        StateType state = JsonHelper.optionalEnum(root, "default_state", StateType.class, StateType.SOLID);
         double meltingPoint = JsonHelper.optionalDouble(root, "melting_point", 0.0);
         double boilingPoint = JsonHelper.optionalDouble(root, "boiling_point", 0.0);
         boolean radioactive = JsonHelper.optionalBoolean(root, "radioactive", false);

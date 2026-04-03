@@ -1,5 +1,6 @@
 package com.penguin.nuclide;
 
+import com.penguin.nuclide.command.ContainerCommandDispatcher;
 import com.penguin.nuclide.command.ReactionCommandDispatcher;
 import com.penguin.nuclide.command.SpeciesCommandDispatcher;
 import com.penguin.nuclide.command.TagCommandDispatcher;
@@ -40,6 +41,7 @@ public class Nuclide implements ModInitializer {
             ReactionCommandDispatcher.register(dispatcher);
             TagCommandDispatcher.register(dispatcher);
             SpeciesCommandDispatcher.register(dispatcher);
+            ContainerCommandDispatcher.register(dispatcher);
         });
 
         LOGGER.info("Nuclide initialized");

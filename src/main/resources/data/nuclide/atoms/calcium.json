@@ -3,7 +3,7 @@
   "name": "Calcium",
   "nowns": "[Ca]",
   "molar_mass": 40.078,
-  "state": "solid",
+  "default_state": "solid",
   "melting_point": 842.0,
   "boiling_point": 1484.0,
   "radioactive": false,

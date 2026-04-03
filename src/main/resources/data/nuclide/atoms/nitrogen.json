@@ -3,7 +3,7 @@
   "name": "Nitrogen",
   "nowns": "N",
   "molar_mass": 14.007,
-  "state": "gas",
+  "default_state": "gas",
   "melting_point": -210.0,
   "boiling_point": -195.79,
   "radioactive": false,

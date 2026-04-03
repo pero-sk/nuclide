@@ -3,10 +3,24 @@
   "name": "Water",
   "nowns": "HOH",
   "molar_mass": 18.015,
-  "state": "liquid",
+  "default_state": "liquid",
   "melting_point": 0.0,
   "boiling_point": 100.0,
   "radioactive": false,
   "toxic": false,
-  "flammable": false
+  "flammable": false,
+  "representation": {
+    "gas": {
+      "type": "pressureworks_gas",
+      "id": "pressureworks:steam"
+    },
+    "liquid": {
+      "type": "fluid",
+      "id": "minecraft:water"
+    },
+    "solid": {
+      "type": "block",
+      "id": "minecraft:ice"
+    }
+  }
 }

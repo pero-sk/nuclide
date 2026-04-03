@@ -100,4 +100,11 @@ public final class SpeciesContainer {
             throw new IllegalArgumentException("speciesId cannot be blank");
         }
     }
+    
+    @Override
+    public String toString() {
+        return "SpeciesContainer{" +
+                "counts=" + counts +
+                '}';
+    }
 }

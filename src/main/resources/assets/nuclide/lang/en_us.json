@@ -1,0 +1,5 @@
+{
+    "nuclide.canister": "Canister",
+    "nuclide.canister.empty.tooltip": "Contains various chemical species. Use with a Reaction Chamber to process its contents.",
+    "nuclide.canister.full.tooltip": "Contains various chemical species, Contents: "
+}

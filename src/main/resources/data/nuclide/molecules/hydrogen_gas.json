@@ -3,10 +3,18 @@
   "name": "Hydrogen",
   "nowns": "HH",
   "molar_mass": 2.016,
-  "state": "gas",
+  "default_state": "gas",
   "melting_point": -259.16,
   "boiling_point": -252.87,
   "radioactive": false,
   "toxic": false,
-  "flammable": true
+  "flammable": true,
+  "representation": {
+    "gas": {
+      "type": "pressureworks_gas",
+      "id": "pressureworks:hydrogen"
+    },
+    "liquid": null,
+    "solid": null
+  }
 }

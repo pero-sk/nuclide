@@ -3,7 +3,7 @@
   "name": "Carbon",
   "nowns": "C",
   "molar_mass": 12.011,
-  "state": "solid",
+  "default_state": "solid",
   "melting_point": 3550.0,
   "boiling_point": 4827.0,
   "radioactive": false,
