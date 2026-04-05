@@ -1,132 +1,113 @@
 package com.penguin.nuclide.data;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.penguin.nuclide.Nuclide;
+import com.penguin.nuclide.atomic.Molecule;
 import com.penguin.nuclide.atomic.StateType;
 import com.penguin.nuclide.nowns.NownsNormaliser;
 import com.penguin.nuclide.nowns.NownsParser;
 import com.penguin.nuclide.nowns.ParsedMolecule;
-import com.penguin.nuclide.nowns.validation.NownsValidator;
+import com.penguin.nuclide.species.PhaseRepresentation;
+import com.penguin.nuclide.species.SpeciesRepresentation;
+
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 
-public final class NuclideDataLoader implements SimpleSynchronousResourceReloadListener {
-
-    public static final String MOD_ID = "nuclide";
-    private static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+public final class NuclideDataLoader {
+    private static final Gson GSON = new Gson();
 
     public static final SpeciesRegistry SPECIES = new SpeciesRegistry();
 
+    private static final String ATOMS_PATH = "atoms";
+    private static final String MOLECULES_PATH = "molecules";
+
+    private NuclideDataLoader() {}
+
     public static void register() {
-        ResourceManagerHelper.get(ResourceType.SERVER_DATA)
-                .registerReloadListener(new NuclideDataLoader());
+        ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(
+                new SimpleSynchronousResourceReloadListener() {
+                    @Override
+                    public Identifier getFabricId() {
+                        return Nuclide.asIdentifier("species_loader");
+                    }
+
+                    @Override
+                    public void reload(ResourceManager manager) {
+                        loadAll(manager);
+                    }
+                }
+        );
     }
 
-    @Override
-    public Identifier getFabricId() {
-        return Identifier.of(MOD_ID, "species_loader");
-    }
+    public static void loadAll(ResourceManager manager) {
+        Objects.requireNonNull(manager, "manager");
 
-    @Override
-    public void reload(ResourceManager manager) {
         SPECIES.clear();
 
-        loadFolder(manager, "molecules", SpeciesKind.MOLECULE);
-        loadFolder(manager, "atoms", SpeciesKind.ATOM);
+        loadDirectory(manager, ATOMS_PATH, SpeciesKind.ATOM);
+        loadDirectory(manager, MOLECULES_PATH, SpeciesKind.MOLECULE);
 
-        LOGGER.info("[Nuclide] Loaded {} molecule definitions", SPECIES.size());
-
-        SpeciesDefinition water = SPECIES.getById("molecules:water");
-        if (water != null) {
-            LOGGER.info("[Nuclide] Water normalized NOWNS: {}", water.normalizedNowns());
-        }
-
-        SpeciesDefinition salt = SPECIES.getByNormalizedNowns("nuclide:[Cl^-1].[Na^+1]");
-        if (salt != null) {
-            LOGGER.info("[Nuclide] Salt normalized NOWNS lookup worked: {}", salt.id());
-        }
+        Nuclide.LOGGER.info("Loaded {} species", SPECIES.size());
     }
 
-    private void loadFolder(ResourceManager manager, String folder, SpeciesKind kind) {
+    private static void loadDirectory(ResourceManager manager, String folder, SpeciesKind kind) {     
         Map<Identifier, Resource> resources = manager.findResources(
-            folder,
-            id -> id.getNamespace().equals(MOD_ID) && id.getPath().endsWith(".json")
+                folder,
+                id -> id.getPath().endsWith(".json")
         );
 
         for (Map.Entry<Identifier, Resource> entry : resources.entrySet()) {
             Identifier resourceId = entry.getKey();
             Resource resource = entry.getValue();
 
-            try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-                JsonObject root = GSON.fromJson(reader, JsonObject.class);
-
-                SpeciesDefinition definition = parseSpeciesDefinition(root, resourceId, kind);
+            try (Reader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+                JsonObject json = GSON.fromJson(reader, JsonObject.class);
+                SpeciesDefinition definition = parseSpecies(json, kind);
                 SPECIES.register(definition);
-
             } catch (Exception e) {
-                throw new IllegalStateException("Failed to load molecule JSON: " + resourceId, e);
+                Nuclide.LOGGER.error("Failed to load species resource '{}': {}", resourceId, e.getMessage(), e);
             }
         }
     }
 
-    private void validateSpeciesKind(ParsedMolecule parsed, SpeciesKind kind, String id) {
-        int atomCount = parsed.molecule().atoms().size();
-        int bondCount = parsed.molecule().bonds().size();
+    private static SpeciesDefinition parseSpecies(JsonObject json, SpeciesKind kind) {
+        String id = getRequiredString(json, "id");
+        String name = getRequiredString(json, "name");
+        String rawNowns = getRequiredString(json, "nowns");
 
-        if (kind == SpeciesKind.ATOM) {
-            if (atomCount != 1) {
-                throw new IllegalStateException(
-                        "Species '" + id + "' is in atoms/ but contains " + atomCount + " atoms"
-                );
-            }
-            if (bondCount != 0) {
-                throw new IllegalStateException(
-                        "Species '" + id + "' is in atoms/ but contains " + bondCount + " bonds"
-                );
-            }
-        }
-    }
+        String normalizedNowns = NownsNormaliser.normalise(rawNowns);
+        ParsedMolecule parsed = NownsParser.parse(normalizedNowns);
+        Molecule molecule = parsed.molecule();
 
-    private SpeciesDefinition parseSpeciesDefinition(JsonObject root, Identifier resourceId, SpeciesKind kind) {
-        String id = JsonHelper.requireString(root, "id");
-        String name = JsonHelper.optionalString(root, "name", id);
-        String rawNowns = JsonHelper.requireString(root, "nowns");
-        StateType state = JsonHelper.optionalEnum(root, "default_state", StateType.class, StateType.SOLID);
-        double meltingPoint = JsonHelper.optionalDouble(root, "melting_point", 0.0);
-        double boilingPoint = JsonHelper.optionalDouble(root, "boiling_point", 0.0);
-        boolean radioactive = JsonHelper.optionalBoolean(root, "radioactive", false);
-        boolean toxic = JsonHelper.optionalBoolean(root, "toxic", false);
-        boolean flammable = JsonHelper.optionalBoolean(root, "flammable", false);
-        double molarMass = JsonHelper.requireDouble(root, "molar_mass");
+        StateType state = parseState(getRequiredString(json, "default_state"));
+        double meltingPoint = getRequiredDouble(json, "melting_point");
+        double boilingPoint = getRequiredDouble(json, "boiling_point");
+        boolean radioactive = getRequiredBoolean(json, "radioactive");
+        boolean toxic = getRequiredBoolean(json, "toxic");
+        boolean flammable = getRequiredBoolean(json, "flammable");
+        double molarMass = getRequiredDouble(json, "molar_mass");
 
-
-        ParsedMolecule parsed = NownsParser.parse(rawNowns);
-
-        validateSpeciesKind(parsed, kind, id);
-
-        NownsValidator.validateOrThrow(parsed.molecule());
-
-        String normalized = NownsNormaliser.normalise(parsed);
+        String namespace = extractNamespace(id);
+        SpeciesRepresentation representation = parseRepresentation(json.getAsJsonObject("representation"));
 
         return new SpeciesDefinition(
                 id,
                 name,
                 rawNowns,
-                normalized,
-                parsed.namespace(),
-                parsed.molecule(),
+                normalizedNowns,
+                namespace,
+                molecule,
                 parsed,
                 state,
                 meltingPoint,
@@ -135,7 +116,88 @@ public final class NuclideDataLoader implements SimpleSynchronousResourceReloadL
                 toxic,
                 flammable,
                 molarMass,
-                kind
+                kind,
+                representation
         );
+    }
+
+    private static SpeciesRepresentation parseRepresentation(JsonObject json) {
+        if (json == null) {
+            return SpeciesRepresentation.EMPTY;
+        }
+
+        PhaseRepresentation solid = parsePhaseRepresentation(json, "solid");
+        PhaseRepresentation liquid = parsePhaseRepresentation(json, "liquid");
+        PhaseRepresentation gas = parsePhaseRepresentation(json, "gas");
+
+        return new SpeciesRepresentation(solid, liquid, gas);
+    }
+
+    private static PhaseRepresentation parsePhaseRepresentation(JsonObject parent, String key) {
+        if (!parent.has(key) || parent.get(key).isJsonNull()) {
+            return null;
+        }
+
+        JsonObject phaseObject = parent.getAsJsonObject(key);
+        String block = getOptionalString(phaseObject, "block");
+
+        if (block == null) {
+            return null;
+        }
+
+        return new PhaseRepresentation(block);
+    }
+
+    private static StateType parseState(String raw) {
+        try {
+            return StateType.valueOf(raw.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unknown state '" + raw + "'");
+        }
+    }
+
+    private static String extractNamespace(String id) {
+        int index = id.indexOf(':');
+        if (index < 0) {
+            throw new IllegalArgumentException("Species id must contain namespace: " + id);
+        }
+        return id.substring(0, index);
+    }
+
+    private static String getRequiredString(JsonObject json, String key) {
+        if (!json.has(key) || json.get(key).isJsonNull()) {
+            throw new IllegalArgumentException("Missing required string field '" + key + "'");
+        }
+        String value = json.get(key).getAsString();
+        if (value.isBlank()) {
+            throw new IllegalArgumentException("Field '" + key + "' cannot be blank");
+        }
+        return value;
+    }
+
+    private static String getOptionalString(JsonObject json, String key) {
+        if (json == null || !json.has(key) || json.get(key).isJsonNull()) {
+            return null;
+        }
+        String value = json.get(key).getAsString();
+        return value.isBlank() ? null : value;
+    }
+
+    private static double getRequiredDouble(JsonObject json, String key) {
+        if (!json.has(key) || json.get(key).isJsonNull()) {
+            throw new IllegalArgumentException("Missing required number field '" + key + "'");
+        }
+        double value = json.get(key).getAsDouble();
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Field '" + key + "' must be finite");
+        }
+        return value;
+    }
+
+    private static boolean getRequiredBoolean(JsonObject json, String key) {
+        if (!json.has(key) || json.get(key).isJsonNull()) {
+            throw new IllegalArgumentException("Missing required boolean field '" + key + "'");
+        }
+        return json.get(key).getAsBoolean();
     }
 }

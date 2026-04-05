@@ -15,6 +15,10 @@ public final class SpeciesRegistry {
         byNormalizedNowns.clear();
     }
 
+    public Iterable<SpeciesDefinition> all() {
+        return byId.values();
+    }
+
     public void register(SpeciesDefinition definition) {
         Objects.requireNonNull(definition);
 

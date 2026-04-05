@@ -10,17 +10,12 @@
   "toxic": false,
   "flammable": false,
   "representation": {
-    "gas": {
-      "type": "pressureworks_gas",
-      "id": "pressureworks:steam"
+    "solid": {
+      "block": "minecraft:ice"
     },
     "liquid": {
-      "type": "fluid",
-      "id": "minecraft:water"
+      "block": "minecraft:water"
     },
-    "solid": {
-      "type": "block",
-      "id": "minecraft:ice"
-    }
+    "gas": null
   }
 }

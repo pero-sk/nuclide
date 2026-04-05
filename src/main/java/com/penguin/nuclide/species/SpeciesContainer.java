@@ -94,6 +94,60 @@ public final class SpeciesContainer {
         return Map.copyOf(counts);
     }
 
+public int clampToCapacity(int capacity) {
+    if (capacity < 0) {
+        throw new IllegalArgumentException("capacity cannot be negative");
+    }
+
+    int total = totalAmount();
+    if (total <= capacity) {
+        return 0;
+    }
+
+    int overflow = total - capacity;
+    int removedTotal = 0;
+
+    while (overflow > 0 && !counts.isEmpty()) {
+        Map.Entry<String, Integer> largest = largestStackEntry();
+        if (largest == null) {
+            break;
+        }
+
+        String speciesId = largest.getKey();
+        int currentAmount = largest.getValue();
+
+        int removed = Math.min(currentAmount, overflow);
+        int updated = currentAmount - removed;
+
+        if (updated == 0) {
+            counts.remove(speciesId);
+        } else {
+            counts.put(speciesId, updated);
+        }
+
+        overflow -= removed;
+        removedTotal += removed;
+    }
+
+    return removedTotal;
+}
+
+    private Map.Entry<String, Integer> largestStackEntry() {
+        Map.Entry<String, Integer> largest = null;
+
+        for (Map.Entry<String, Integer> entry : counts.entrySet()) {
+            if (largest == null || entry.getValue() > largest.getValue()) {
+                largest = entry;
+            }
+        }
+
+        return largest;
+    }
+
+    public int totalAmount() {
+        return counts.values().stream().mapToInt(Integer::intValue).sum();
+    }
+
     private static void validateSpeciesId(String speciesId) {
         Objects.requireNonNull(speciesId, "speciesId");
         if (speciesId.isBlank()) {
@@ -101,6 +155,7 @@ public final class SpeciesContainer {
         }
     }
     
+
     @Override
     public String toString() {
         return "SpeciesContainer{" +

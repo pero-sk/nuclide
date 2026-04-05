@@ -49,11 +49,11 @@ public final class ReactionCommandDispatcher {
                                                     () -> Text.of(
                                                             "Reaction found: " +
                                                                     reaction.id() +
-                                                                    " | name=" + reaction.name() +
-                                                                    " | inputs=" + reaction.inputs().size() +
-                                                                    " | outputs=" + reaction.outputs().size() +
-                                                                    " | duration=" + reaction.durationTicks() +
-                                                                    " | conditions=" + reaction.conditions()
+                                                                    " \n| name=" + reaction.name() +
+                                                                    " \n| inputs=" + reaction.inputs().size() +
+                                                                    " \n| outputs=" + reaction.outputs().size() +
+                                                                    " \n| duration=" + reaction.durationTicks() +
+                                                                    " \n| conditions=" + reaction.conditions()
                                                     ),
                                                     false
                                             );

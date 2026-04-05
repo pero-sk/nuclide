@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "up": "nuclide:block/tank/tSE",
+    "down": "nuclide:block/tank/mSE",
+    "north": "nuclide:block/tank/stSE",
+    "south": "nuclide:block/tank/stSE",
+    "west": "nuclide:block/tank/stSE",
+    "east": "nuclide:block/tank/stSE"
+  }
+}

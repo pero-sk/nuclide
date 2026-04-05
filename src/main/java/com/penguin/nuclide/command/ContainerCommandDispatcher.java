@@ -53,7 +53,7 @@ public final class ContainerCommandDispatcher {
 
                                     Nuclide.LOGGER.info(
                                         "Added to container: " + speciesId +
-                                        " | amount=" + amount +
+                                        " \n| amount=" + amount +
                                         " | container=" + updated
                                     );
 
@@ -96,8 +96,8 @@ public final class ContainerCommandDispatcher {
 
                                     Nuclide.LOGGER.info(
                                         "Removed from container: " + speciesId +
-                                        " | amount=" + amount +
-                                        " | container=" + updated
+                                        " \n| amount=" + amount +
+                                        " \n| container=" + updated
                                     );
 
                                     context.getSource().sendFeedback(

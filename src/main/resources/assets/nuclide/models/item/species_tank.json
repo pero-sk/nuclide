@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "up":     "nuclide:block/tank/cap",
+    "down":   "nuclide:block/tank/cap",
+    "north":  "nuclide:block/tank/side_item",
+    "south":  "nuclide:block/tank/side_item",
+    "east":   "nuclide:block/tank/side_item",
+    "west":   "nuclide:block/tank/side_item",
+    "particle": "nuclide:block/tank/side_item"
+  }
+}

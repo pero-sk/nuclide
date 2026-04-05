@@ -8,13 +8,5 @@
   "boiling_point": -182.95,
   "radioactive": false,
   "toxic": false,
-  "flammable": false,
-  "representation": {
-  "gas": {
-      "type": "pressureworks_gas",
-      "id": "pressureworks:oxygen"
-    },
-    "liquid": null,
-    "solid": null
-  }
+  "flammable": false
 }

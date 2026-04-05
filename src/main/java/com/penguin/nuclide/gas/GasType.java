@@ -1,10 +1,7 @@
 package com.penguin.nuclide.gas;
 
-import java.util.function.Supplier;
-
 import org.joml.Vector3f;
 
-import net.minecraft.block.Block;
 import net.minecraft.util.Identifier;
 
 public final class GasType {
@@ -18,11 +15,9 @@ public final class GasType {
     private final Vector3f color;
     private final float flammability;
     private final float toxicity;
-    private final Supplier<Block> blockSupplier;
 
     public GasType(
             Identifier id,
-            Supplier<Block> blockSupplier,
             float density,
             float maxSafePressure,
             float dissipationRate,
@@ -31,30 +26,14 @@ public final class GasType {
             float flammability,
             float toxicity
     ) {
-        if (id == null) {
-            throw new IllegalArgumentException("GasType id cannot be null");
-        }
-        if (blockSupplier == null) {
-            throw new IllegalArgumentException("GasType blockSupplier cannot be null");
-        }
-        if (density <= 0f) {
-            throw new IllegalArgumentException("Gas density must be > 0");
-        }
-        if (maxSafePressure <= 0f) {
-            throw new IllegalArgumentException("Max safe pressure must be > 0");
-        }
-        if (dissipationRate < 0f) {
-            throw new IllegalArgumentException("Dissipation rate cannot be negative");
-        }
-        if (flammability < 0f) {
-            throw new IllegalArgumentException("Flammability cannot be negative");
-        }
-        if (toxicity < 0f) {
-            throw new IllegalArgumentException("Toxicity cannot be negative");
-        }
+        if (id == null) throw new IllegalArgumentException("GasType id cannot be null");
+        if (density <= 0f) throw new IllegalArgumentException("Gas density must be > 0");
+        if (maxSafePressure <= 0f) throw new IllegalArgumentException("Max safe pressure must be > 0");
+        if (dissipationRate < 0f) throw new IllegalArgumentException("Dissipation rate cannot be negative");
+        if (flammability < 0f) throw new IllegalArgumentException("Flammability cannot be negative");
+        if (toxicity < 0f) throw new IllegalArgumentException("Toxicity cannot be negative");
 
         this.id = id;
-        this.blockSupplier = blockSupplier;
         this.density = density;
         this.maxSafePressure = maxSafePressure;
         this.dissipationRate = dissipationRate;
@@ -64,51 +43,15 @@ public final class GasType {
         this.toxicity = toxicity;
     }
 
-    public Identifier getId() {
-        return id;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public float getDensity() {
-        return density;
-    }
-
-    public float getMaxSafePressure() {
-        return maxSafePressure;
-    }
-
-    public float getDissipationRate() {
-        return dissipationRate;
-    }
-
-    public Vector3f getColor() {
-        return new Vector3f(color);
-    }
-
-    public boolean isColorless() {
-        return color.x == -1f && color.y == -1f && color.z == -1f;
-    }
-
-    public float getFlammability() {
-        return flammability;
-    }
-
-    public boolean isFlammable() {
-        return flammability > 0f;
-    }
-
-    public float getToxicity() {
-        return toxicity;
-    }
-
-    public boolean isToxic() {
-        return toxicity > 0f;
-    }
-
-    public Block getBlock() {
-        return blockSupplier.get();
-    }
+    public Identifier getId() { return id; }
+    public String getDisplayName() { return displayName; }
+    public float getDensity() { return density; }
+    public float getMaxSafePressure() { return maxSafePressure; }
+    public float getDissipationRate() { return dissipationRate; }
+    public Vector3f getColor() { return new Vector3f(color); }
+    public boolean isColorless() { return color.x == -1f && color.y == -1f && color.z == -1f; }
+    public float getFlammability() { return flammability; }
+    public boolean isFlammable() { return flammability > 0f; }
+    public float getToxicity() { return toxicity; }
+    public boolean isToxic() { return toxicity > 0f; }
 }

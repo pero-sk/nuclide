@@ -65,6 +65,10 @@ public final class SpeciesStack {
         return new SpeciesStack(speciesId, newCount);
     }
 
+    public static SpeciesStack empty(String speciesId) {
+        return new SpeciesStack(speciesId, 0);
+    }
+
     public boolean sameSpecies(String otherSpeciesId) {
         return speciesId.equals(otherSpeciesId);
     }

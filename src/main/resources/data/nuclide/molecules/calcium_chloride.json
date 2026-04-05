@@ -8,13 +8,5 @@
   "boiling_point": 1935.0,
   "radioactive": false,
   "toxic": false,
-  "flammable": false,
-  "representation": {
-    "gas": null,
-    "liquid": null,
-    "solid": {
-      "type": "block",
-      "id": "nuclide:calcium_chloride_block"
-    }
-  }
+  "flammable": false
 }

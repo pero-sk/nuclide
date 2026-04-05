@@ -60,6 +60,6 @@ public class CanisterItem extends Item {
     }
 
     public static void setContainer(ItemStack stack, SpeciesContainer container) {
-        stack.set(NuclideDataComponents.SPECIES_CONTAINER, container);
+        stack.set(NuclideDataComponents.SPECIES_CONTAINER, container.copy());
     }
 }

@@ -1,5 +1,12 @@
 {
     "nuclide.canister": "Canister",
     "nuclide.canister.empty.tooltip": "Contains various chemical species. Use with a Reaction Chamber to process its contents.",
-    "nuclide.canister.full.tooltip": "Contains various chemical species, Contents: "
+    "nuclide.canister.full.tooltip": "Contains various chemical species, Contents: ",
+    "block.nuclide.species_tank_casing": "Species Vat",
+    "block.nuclide.species_tank_controller": "Species Vat",
+    "nuclide.tank.not_formed": "Species Vat not formed",
+    "nuclide.tank.empty": "Species Vat is empty (0 mmols / %s mmols)",
+    "nuclide.tank.header": "Vat (%s mmols / %s mmols)\n",
+    "nuclide.tank.entry": "- %s: %s mmols\n"
+
 }

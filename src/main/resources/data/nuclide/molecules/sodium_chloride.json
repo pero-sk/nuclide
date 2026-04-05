@@ -8,13 +8,5 @@
   "boiling_point": 1465.0,
   "radioactive": false,
   "toxic": false,
-  "flammable": false,
-  "representation": {
-    "gas": null,
-    "liquid": null,
-    "solid": {
-      "type": "block",
-      "id": "nuclide:sodium_chloride_block"
-    }
-  }
+  "flammable": false
 }

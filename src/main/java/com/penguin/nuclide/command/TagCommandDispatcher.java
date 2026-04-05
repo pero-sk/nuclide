@@ -31,8 +31,8 @@ public final class TagCommandDispatcher {
                                                         () -> Text.of(
                                                                 "Tag found: " +
                                                                 tag.id() +
-                                                                " | size=" + tag.size() +
-                                                                " | values=" + tag.values()
+                                                                " \n| size=" + tag.size() +
+                                                                " \n| values=" + tag.values()
                                                         ),
                                                         false
                                                 );

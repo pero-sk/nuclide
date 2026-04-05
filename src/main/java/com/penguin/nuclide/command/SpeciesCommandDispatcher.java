@@ -26,14 +26,30 @@ public final class SpeciesCommandDispatcher {
                                     SpeciesDefinition species = NuclideDataLoader.SPECIES.getById(id.toString());
 
                                     if (species != null) {
+
+                                        String SolidRep = species.representation().solid() != null
+                                            ? species.representation().solid().block().toString().trim()
+                                            : "none";
+                                        
+                                        String LiquidRep = species.representation().liquid() != null
+                                            ? species.representation().liquid().block().toString().trim()
+                                            : "none";
+                                        
+                                        String GasRep = species.representation().gas() != null
+                                            ? species.representation().gas().block().toString().trim()
+                                            : "none";
+
                                         context.getSource().sendFeedback(
                                                 () -> Text.of(
                                                         "Species found: " +
                                                         species.id() +
-                                                        " | name=" + species.name() +
-                                                        " | raw=" + species.rawNowns() +
-                                                        " | normalized=" + species.normalizedNowns() +
-                                                        " | kind=" + species.kind()
+                                                        " \n| name=" + species.name() +
+                                                        " \n| raw=" + species.rawNowns() +
+                                                        " \n| normalized=" + species.normalizedNowns() +
+                                                        " \n| kind=" + species.kind() +
+                                                        " \n| solid.representation=" + SolidRep +
+                                                        " \n| liquid.representation=" + LiquidRep +
+                                                        " \n| gas.representation=" + GasRep
                                                 ),
                                                 false
                                         );

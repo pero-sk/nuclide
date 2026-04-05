@@ -10,11 +10,10 @@
   "toxic": false,
   "flammable": true,
   "representation": {
-    "gas": {
-      "type": "pressureworks_gas",
-      "id": "pressureworks:hydrogen"
-    },
     "liquid": null,
-    "solid": null
+    "solid": null,
+    "gas": {
+      "block": "nuclide:hydrogen_gas"
+    }
   }
 }
