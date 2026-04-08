@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.penguin.nuclide.Nuclide;
 import com.penguin.nuclide.content.registry.ModBlockEntities;
+import com.penguin.nuclide.misc.IHaveHoverInformation;
 import com.penguin.nuclide.species.SpeciesStack;
 import com.penguin.nuclide.transport.SpeciesFilter;
 import com.penguin.nuclide.transport.SpeciesMixture;
@@ -14,13 +15,16 @@ import com.penguin.nuclide.transport.SpeciesTransportNode;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.text.Text;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-public class PipeBlockEntity extends BlockEntity implements SpeciesTransportNode {
+public class PipeBlockEntity extends BlockEntity implements SpeciesTransportNode, IHaveHoverInformation {
     private static final int BUFFER_CAPACITY = 200;
     private static final int TRANSFER_RATE = Nuclide.DEFAULT_TRANSFER_RATE;
 
@@ -297,5 +301,25 @@ public class PipeBlockEntity extends BlockEntity implements SpeciesTransportNode
         } else {
             filterSpeciesId = null;
         }
+    }
+
+    @Override
+    public boolean addHoverInformation(
+            World world,
+            BlockHitResult hit,
+            PlayerEntity player,
+            List<Text> tooltip
+    ) {
+        String filter = getFilterSpeciesId();
+
+        tooltip.add(Text.literal("Pipe"));
+
+        if (filter == null) {
+            tooltip.add(Text.literal("Filter: none"));
+        } else {
+            tooltip.add(Text.literal("Filter: " + filter));
+        }
+
+        return true;
     }
 }

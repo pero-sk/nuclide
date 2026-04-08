@@ -10,6 +10,8 @@ import com.penguin.nuclide.screen.SpeciesFilterScreen;
 import com.penguin.nuclide.content.items.SpeciesFilterItem;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.item.ItemStack;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import com.penguin.nuclide.renderer.HoverInfoRenderer;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -61,6 +63,10 @@ public final class NuclideClient implements ClientModInitializer {
             }
 
             return net.minecraft.util.TypedActionResult.pass(stack);
+        });
+
+        HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {
+            HoverInfoRenderer.render(drawContext, tickDelta);
         });
 
     }
