@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.penguin.nuclide.data.SpeciesDefinition;
 import com.penguin.nuclide.nbt.NuclideDataComponents;
 import com.penguin.nuclide.species.SpeciesContainer;
+import com.penguin.nuclide.species.SpeciesStack;
 import com.penguin.nuclide.data.NuclideDataLoader;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.item.ItemStack;
@@ -33,6 +34,8 @@ public final class ContainerCommandDispatcher {
 
                                     SpeciesDefinition species = NuclideDataLoader.SPECIES.getById(speciesId.toString());
 
+                                    SpeciesStack speciesStack = new SpeciesStack(speciesId.toString(), amount);
+
                                     if (species == null) {
                                         context.getSource().sendError(Text.of("Species not found: " + speciesId));
                                         return 0;
@@ -47,7 +50,7 @@ public final class ContainerCommandDispatcher {
                                     );
 
                                     SpeciesContainer updated = existing.copy();
-                                    updated.add(speciesId.toString(), amount);
+                                    updated.add(speciesStack.key(), amount);
 
                                     stack.set(NuclideDataComponents.SPECIES_CONTAINER, updated);
 
@@ -76,6 +79,8 @@ public final class ContainerCommandDispatcher {
 
                                     SpeciesDefinition species = NuclideDataLoader.SPECIES.getById(speciesId.toString());
 
+                                    SpeciesStack speciesStack = new SpeciesStack(speciesId.toString(), amount);
+
                                     if (species == null) {
                                         context.getSource().sendError(Text.of("Species not found: " + speciesId));
                                         return 0;
@@ -90,7 +95,7 @@ public final class ContainerCommandDispatcher {
                                     );
 
                                     SpeciesContainer updated = existing.copy();
-                                    updated.remove(speciesId.toString(), amount);
+                                    updated.remove(speciesStack.key(), amount);
 
                                     stack.set(NuclideDataComponents.SPECIES_CONTAINER, updated);
 

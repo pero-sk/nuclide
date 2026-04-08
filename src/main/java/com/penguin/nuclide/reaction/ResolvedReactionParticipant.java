@@ -2,18 +2,20 @@ package com.penguin.nuclide.reaction;
 
 import java.util.Objects;
 
+import com.penguin.nuclide.species.SpeciesKey;
+
 public final class ResolvedReactionParticipant {
     private final ReactionParticipant original;
-    private final String resolvedSpeciesId;
+    private final SpeciesKey resolvedKey;
     private final int count;
 
     public ResolvedReactionParticipant(
             ReactionParticipant original,
-            String resolvedSpeciesId,
+            SpeciesKey resolvedKey,
             int count
     ) {
         this.original = Objects.requireNonNull(original);
-        this.resolvedSpeciesId = Objects.requireNonNull(resolvedSpeciesId);
+        this.resolvedKey = Objects.requireNonNull(resolvedKey);
         this.count = count;
     }
 
@@ -21,8 +23,12 @@ public final class ResolvedReactionParticipant {
         return original;
     }
 
+    public SpeciesKey resolvedKey() {
+        return resolvedKey;
+    }
+
     public String resolvedSpeciesId() {
-        return resolvedSpeciesId;
+        return resolvedKey.speciesId();
     }
 
     public int count() {
@@ -33,7 +39,7 @@ public final class ResolvedReactionParticipant {
     public String toString() {
         return "ResolvedReactionParticipant{" +
                 "original=" + original +
-                ", resolvedSpeciesId='" + resolvedSpeciesId + '\'' +
+                ", resolvedKey=" + resolvedKey +
                 ", count=" + count +
                 '}';
     }

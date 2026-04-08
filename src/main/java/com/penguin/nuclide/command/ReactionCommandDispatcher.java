@@ -14,6 +14,8 @@ import com.penguin.nuclide.reaction.ReactionMatcher;
 import com.penguin.nuclide.reaction.ReactionParticipant;
 import com.penguin.nuclide.reaction.ReactionSearcher;
 import com.penguin.nuclide.species.SpeciesContainer;
+import com.penguin.nuclide.species.SpeciesKey;
+import com.penguin.nuclide.species.SpeciesStack;
 
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
@@ -242,7 +244,9 @@ public final class ReactionCommandDispatcher {
                 throw new IllegalArgumentException("Count must be positive for species " + speciesId);
             }
 
-            inventory.add(speciesId, count);
+            SpeciesStack speciesStack = new SpeciesStack(speciesId, count);
+
+            inventory.add(speciesStack.key(), count);
         }
 
         return inventory;
@@ -252,8 +256,11 @@ public final class ReactionCommandDispatcher {
         StringJoiner joiner = new StringJoiner(", ");
 
         for (ReactionParticipant input : reaction.inputs()) {
+            SpeciesDefinition inputDefinition = NuclideDataLoader.SPECIES.getById(input.speciesId());
+            SpeciesStack inputStack = new SpeciesStack(inputDefinition.id(), input.count());
+
             if (input.isSpecies()) {
-                int available = availableSpecies.countOf(input.speciesId());
+                int available = availableSpecies.countOf(inputStack.key());
                 if (available < input.count()) {
                     int missing = input.count() - available;
                     joiner.add(input.speciesId() + " need " + input.count() + ", have " + available + ", missing " + missing);
@@ -263,8 +270,8 @@ public final class ReactionCommandDispatcher {
                 boolean satisfied = false;
 
                 if (tag != null) {
-                    for (String speciesId : tag.values()) {
-                        int available = availableSpecies.countOf(speciesId);
+                    for (String _speciesId : tag.values()) {
+                        int available = availableSpecies.countOf(inputStack.key());
                         if (available >= input.count()) {
                             satisfied = true;
                             break;
@@ -310,8 +317,8 @@ public final class ReactionCommandDispatcher {
 
         StringJoiner joiner = new StringJoiner(", ");
 
-        for (Map.Entry<String, Integer> entry : inventory.asMap().entrySet()) {
-            SpeciesDefinition species = NuclideDataLoader.SPECIES.getById(entry.getKey());
+        for (Map.Entry<SpeciesKey, Integer> entry : inventory.asMap().entrySet()) {
+            SpeciesDefinition species = NuclideDataLoader.SPECIES.getById(entry.getKey().speciesId());
             if (species != null) {
                 joiner.add(entry.getValue() + "x " + entry.getKey() + " (" + species.name() + ")");
             } else {

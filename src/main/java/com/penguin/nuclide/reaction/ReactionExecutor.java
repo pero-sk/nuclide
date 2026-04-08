@@ -3,6 +3,9 @@ package com.penguin.nuclide.reaction;
 import java.util.List;
 import java.util.Objects;
 
+import com.penguin.nuclide.data.NuclideDataLoader;
+import com.penguin.nuclide.data.SpeciesDefinition;
+import com.penguin.nuclide.atomic.StateType;
 import com.penguin.nuclide.species.SpeciesContainer;
 
 public final class ReactionExecutor {
@@ -37,7 +40,7 @@ public final class ReactionExecutor {
         SpeciesContainer updatedSpecies = availableSpecies.copy();
 
         for (ResolvedReactionParticipant input : resolvedInputs) {
-            updatedSpecies.remove(input.resolvedSpeciesId(), input.count());
+            updatedSpecies.remove(input.resolvedKey(), input.count());
         }
 
         for (ReactionParticipant output : reaction.outputs()) {
@@ -47,7 +50,13 @@ public final class ReactionExecutor {
                 );
             }
 
-            updatedSpecies.add(output.speciesId(), output.count());
+            SpeciesDefinition species = NuclideDataLoader.SPECIES.getById(output.speciesId());
+            if (species == null) {
+                throw new IllegalStateException("Unknown output species: " + output.speciesId());
+            }
+
+            StateType state = species.state();
+            updatedSpecies.add(output.speciesId(), state, output.count());
         }
 
         return updatedSpecies;

@@ -6,11 +6,13 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.penguin.nuclide.atomic.StateType;
-import com.penguin.nuclide.content.blockentities.SpeciesTankCasingBlockEntity;
-import com.penguin.nuclide.content.blockentities.SpeciesTankControllerBlockEntity;
+import com.penguin.nuclide.content.blockentities.species_tank.SpeciesTankCasingBlockEntity;
+import com.penguin.nuclide.content.blockentities.species_tank.SpeciesTankControllerBlockEntity;
 import com.penguin.nuclide.content.registry.ModBlocks;
 import com.penguin.nuclide.data.NuclideDataLoader;
 import com.penguin.nuclide.data.SpeciesDefinition;
+import com.penguin.nuclide.species.SpeciesKey;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
@@ -353,7 +355,7 @@ public final class TankShellModel implements BakedModel, FabricBakedModel {
     private record PhaseFractions(float solid, float liquid, float gas) {}
 
     private PhaseFractions getPhaseFractions(BlockRenderView world, BlockPos pos) {
-        Map<String, Integer> m = null;
+        Map<SpeciesKey, Integer> m = null;
 
         if (world.getBlockEntity(pos) instanceof SpeciesTankCasingBlockEntity tank) {
             BlockPos c = tank.getControllerPos();
@@ -379,10 +381,10 @@ public final class TankShellModel implements BakedModel, FabricBakedModel {
         );
     }
 
-    private float fractionOf(Map<String, Integer> m, int grandTotal, StateType target) {
+    private float fractionOf(Map<SpeciesKey, Integer> m, int grandTotal, StateType target) {
         int sum = m.entrySet().stream()
             .filter(e -> {
-                SpeciesDefinition def = NuclideDataLoader.SPECIES.getById(e.getKey());
+                SpeciesDefinition def = NuclideDataLoader.SPECIES.getById(e.getKey().speciesId());
                 return def != null && def.state() == target;
             })
             .mapToInt(Map.Entry::getValue)

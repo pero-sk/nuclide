@@ -35,6 +35,7 @@ public final class NuclideDataLoader {
     private NuclideDataLoader() {}
 
     public static void register() {
+
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(
                 new SimpleSynchronousResourceReloadListener() {
                     @Override

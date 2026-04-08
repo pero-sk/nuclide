@@ -515,3 +515,5 @@ If you are making standard Nuclide molecule files:
 - never rely on implicit hydrogens
 - do not use `nuclide:` for ids
 - do not use `minecraft:` for ids
+
+# Reaction JSON Guide

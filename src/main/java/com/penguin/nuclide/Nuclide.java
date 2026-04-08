@@ -5,6 +5,7 @@ import com.penguin.nuclide.command.ReactionCommandDispatcher;
 import com.penguin.nuclide.command.SpeciesCommandDispatcher;
 import com.penguin.nuclide.command.TagCommandDispatcher;
 import com.penguin.nuclide.nbt.NuclideDataComponents;
+import com.penguin.nuclide.network.SetSpeciesFilterC2SPacket;
 import com.penguin.nuclide.data.NuclideDataLoader;
 import com.penguin.nuclide.gas.GasRegistry;
 import com.penguin.nuclide.reaction.ReactionDataLoader;
@@ -24,6 +25,8 @@ public class Nuclide implements ModInitializer {
     public static final String MOD_ID = "nuclide";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    public static final int DEFAULT_TRANSFER_RATE = 600;
+
     // being realistic, 1 minecraft block = 1 cubic meter, 
     // which at that scale would be around 44,600 mmols of gas at standard temperature and pressure.
     // which would just be horrible UX for users,
@@ -37,6 +40,8 @@ public class Nuclide implements ModInitializer {
         NuclideDataComponents.init();
 
         NuclideDataLoader.register();
+
+        SetSpeciesFilterC2SPacket.register();
 
         ModBlocks.register();
         ModBlockEntities.init();

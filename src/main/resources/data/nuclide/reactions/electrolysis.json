@@ -1,0 +1,17 @@
+{
+  "id": "nuclide:electrolysis",
+  "name": "Water Electrolysis",
+  "inputs": [
+    { "species": "molecules:water", "count": 1 }
+  ],
+  "outputs": [
+    { "species": "molecules:hydrogen_gas", "count": 1 },
+    { "species": "atoms:oxygen", "count": 1}
+  ],
+  "conditions": {
+    "min_temperature": 0,
+    "requires_spark": false,
+    "catalyst": null
+  },
+  "duration": 1
+}

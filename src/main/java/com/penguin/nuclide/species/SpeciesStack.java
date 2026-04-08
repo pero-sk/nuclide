@@ -2,16 +2,47 @@ package com.penguin.nuclide.species;
 
 import java.util.Objects;
 
+import com.penguin.nuclide.atomic.StateType;
 import com.penguin.nuclide.data.NuclideDataLoader;
 import com.penguin.nuclide.data.SpeciesDefinition;
 
 public final class SpeciesStack {
     private final String speciesId;
     private final int count;
+    private final StateType state;
+
+    public SpeciesStack(String speciesId, int count, StateType state) {
+        this.speciesId = Objects.requireNonNull(speciesId, "speciesId");
+        this.count = count;
+        this.state = state;
+
+        if (speciesId.isBlank()) {
+            throw new IllegalArgumentException("speciesId cannot be blank");
+        }
+
+        if (count < 0) {
+            throw new IllegalArgumentException("count cannot be negative");
+        }
+    }
+
+    public SpeciesStack(SpeciesKey key, int count) {
+        this.speciesId = Objects.requireNonNull(key.speciesId(), "speciesId");
+        this.count = count;
+        this.state = key.currentState();
+
+        if (speciesId.isBlank()) {
+            throw new IllegalArgumentException("speciesId cannot be blank");
+        }
+
+        if (count < 0) {
+            throw new IllegalArgumentException("count cannot be negative");
+        }
+    }
 
     public SpeciesStack(String speciesId, int count) {
         this.speciesId = Objects.requireNonNull(speciesId, "speciesId");
         this.count = count;
+        this.state = NuclideDataLoader.SPECIES.getById(speciesId).state();
 
         if (speciesId.isBlank()) {
             throw new IllegalArgumentException("speciesId cannot be blank");
@@ -30,8 +61,16 @@ public final class SpeciesStack {
         return count;
     }
 
+    public SpeciesKey key() {
+        return new SpeciesKey(speciesId, state);
+    }
+
     public boolean isEmpty() {
         return count == 0;
+    }
+
+    public StateType state() {
+        return state;
     }
 
     public SpeciesDefinition definition() {

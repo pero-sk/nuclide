@@ -1,0 +1,17 @@
+{
+  "id": "nuclide:hydrogen_burn",
+  "name": "Hydrogen burning",
+  "inputs": [
+    { "species": "molecules:hydrogen_gas", "count": 2 },
+    { "species": "molecules:oxygen_gas", "count": 1 }
+  ],
+  "outputs": [
+    { "species": "molecules:water", "count": 2 }
+  ],
+  "conditions": {
+    "min_temperature": 0,
+    "requires_spark": false,
+    "catalyst": null
+  },
+  "duration": 20
+}

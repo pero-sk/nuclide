@@ -1,5 +1,7 @@
 package com.penguin.nuclide.transport;
 
+import java.util.List;
+
 import com.penguin.nuclide.species.SpeciesStack;
 import net.minecraft.util.math.Direction;
 
@@ -16,4 +18,6 @@ public interface SpeciesTransportNode {
         SpeciesStack extracted = extractSpecies(side, filter, 1, true);
         return extracted != null && !extracted.isEmpty();
     }
+
+    List<SpeciesStack> getAvailableSpecies(Direction side);
 }

@@ -3,6 +3,7 @@ package com.penguin.nuclide.reaction;
 import java.util.Objects;
 
 import com.penguin.nuclide.species.SpeciesContainer;
+import com.penguin.nuclide.species.SpeciesStack;
 
 public final class ReactionMatcher {
 
@@ -48,8 +49,16 @@ public final class ReactionMatcher {
         }
 
         if (conditions.hasCatalyst()) {
-            int catalystCount = availableSpecies.countOf(conditions.catalystSpeciesId());
-            if (catalystCount <= 0) {
+            boolean foundCatalyst = false;
+
+            for (SpeciesStack stack : availableSpecies.stacks()) {
+                if (stack.speciesId().equals(conditions.catalystSpeciesId()) && stack.count() > 0) {
+                    foundCatalyst = true;
+                    break;
+                }
+            }
+
+            if (!foundCatalyst) {
                 return false;
             }
         }

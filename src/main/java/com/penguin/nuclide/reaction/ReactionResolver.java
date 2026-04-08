@@ -1,6 +1,7 @@
 package com.penguin.nuclide.reaction;
 
 import com.penguin.nuclide.species.SpeciesContainer;
+import com.penguin.nuclide.species.SpeciesStack;
 import com.penguin.nuclide.tag.SpeciesTagDataLoader;
 import com.penguin.nuclide.tag.SpeciesTagDefinition;
 
@@ -24,19 +25,19 @@ public final class ReactionResolver {
 
         for (ReactionParticipant input : reaction.inputs()) {
             if (input.isSpecies()) {
-                String speciesId = input.speciesId();
+                SpeciesStack matched = findMatchingSpeciesStack(remaining, input.speciesId(), input.count());
 
-                if (!remaining.contains(speciesId, input.count())) {
+                if (matched == null) {
                     throw new IllegalArgumentException(
-                            "Insufficient species '" + speciesId +
+                            "Insufficient species '" + input.speciesId() +
                             "' for reaction '" + reaction.id() + "'"
                     );
                 }
 
-                remaining.remove(speciesId, input.count());
+                remaining.remove(matched.key(), input.count());
                 resolved.add(new ResolvedReactionParticipant(
                         input,
-                        speciesId,
+                        matched.key(),
                         input.count()
                 ));
                 continue;
@@ -50,17 +51,17 @@ public final class ReactionResolver {
                     );
                 }
 
-                String resolvedSpeciesId = null;
+                SpeciesStack matched = null;
 
                 for (String speciesId : tag.values()) {
-                    if (remaining.contains(speciesId, input.count())) {
-                        resolvedSpeciesId = speciesId;
-                        remaining.remove(speciesId, input.count());
+                    matched = findMatchingSpeciesStack(remaining, speciesId, input.count());
+                    if (matched != null) {
+                        remaining.remove(matched.key(), input.count());
                         break;
                     }
                 }
 
-                if (resolvedSpeciesId == null) {
+                if (matched == null) {
                     throw new IllegalArgumentException(
                             "No species in tag '" + input.tagId() +
                             "' can satisfy count " + input.count() +
@@ -70,7 +71,7 @@ public final class ReactionResolver {
 
                 resolved.add(new ResolvedReactionParticipant(
                         input,
-                        resolvedSpeciesId,
+                        matched.key(),
                         input.count()
                 ));
                 continue;
@@ -82,5 +83,23 @@ public final class ReactionResolver {
         }
 
         return resolved;
+    }
+
+    private static SpeciesStack findMatchingSpeciesStack(
+            SpeciesContainer container,
+            String speciesId,
+            int requiredCount
+    ) {
+        for (SpeciesStack stack : container.stacks()) {
+            if (!stack.speciesId().equals(speciesId)) {
+                continue;
+            }
+
+            if (stack.count() >= requiredCount) {
+                return stack;
+            }
+        }
+
+        return null;
     }
 }
