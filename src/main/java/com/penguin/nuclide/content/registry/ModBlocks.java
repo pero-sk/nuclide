@@ -3,6 +3,7 @@ package com.penguin.nuclide.content.registry;
 import com.penguin.nuclide.Nuclide;
 import com.penguin.nuclide.content.blocks.binder.BinderBlock;
 import com.penguin.nuclide.content.blocks.cable.CableBlock;
+import com.penguin.nuclide.content.blocks.creative.energiser.CreativeEnergiserBlock;
 import com.penguin.nuclide.content.blocks.electrolyser.ElectrolyserBlock;
 import com.penguin.nuclide.content.blocks.gas.GasBlock;
 import com.penguin.nuclide.content.blocks.hand_crank.HandCrankBlock;
@@ -67,6 +68,7 @@ public final class ModBlocks {
     public static final PipeBlock PIPE = new PipeBlock(
         AbstractBlock.Settings.create()
                 .strength(2.0f)
+                .nonOpaque()
     );
 
     public static final ElectrolyserBlock ELECTROLYSER = new ElectrolyserBlock(
@@ -94,6 +96,11 @@ public final class ModBlocks {
                 .strength(3.5f)
     );
 
+    public static final CreativeEnergiserBlock CREATIVE_ENERGISER = new CreativeEnergiserBlock(
+        AbstractBlock.Settings.create()
+                .strength(1.0f)
+    );
+
     private ModBlocks() {}
 
     public static void register() {
@@ -108,6 +115,7 @@ public final class ModBlocks {
         Registry.register(Registries.BLOCK, Nuclide.asIdentifier("hydrogen_furnace"), HYDROGEN_FURNACE);
         Registry.register(Registries.BLOCK, Nuclide.asIdentifier("cable"), CABLE);
         Registry.register(Registries.BLOCK, Nuclide.asIdentifier("binder"), BINDER);
+        Registry.register(Registries.BLOCK, Nuclide.asIdentifier("creative_energiser"), CREATIVE_ENERGISER);
 
         Nuclide.GASES.register(HYDROGEN_GAS_TYPE);
     }

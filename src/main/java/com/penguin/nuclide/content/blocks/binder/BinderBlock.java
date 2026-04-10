@@ -6,6 +6,7 @@ import com.mojang.serialization.MapCodec;
 import com.penguin.nuclide.content.blockentities.binder.BinderBlockEntity;
 import com.penguin.nuclide.content.registry.ModBlockEntities;
 
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -36,5 +37,10 @@ public class BinderBlock extends BlockWithEntity {
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return validateTicker(type, ModBlockEntities.BINDER, BinderBlockEntity::tick);
+    }
+
+    @Override
+    protected BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
     }
 }

@@ -7,6 +7,16 @@
     "nuclide.tank.not_formed": "Species Vat not formed",
     "nuclide.tank.empty": "Species Vat is empty (0 mmols / %s mmols)",
     "nuclide.tank.header": "Vat (%s mmols / %s mmols)\n",
-    "nuclide.tank.entry": "- %s: %s mmols\n"
+    "nuclide.tank.entry": "- %s: %s mmols\n",
 
+    "block.nuclide.pump": "Pump",
+    "block.nuclide.pipe": "Pipe",
+    "block.nuclide.hydrogen_furnace": "Hydrogen Furnace",
+    "block.nuclide.hand_crank": "Hand Crank",
+    "block.nuclide.electrolyser": "Electrolyzer",
+    "block.nuclide.creative_energiser": "Creative Energizer",
+    "block.nuclide.binder": "Binder",
+    "block.nuclide.cable": "Cable",
+
+    "itemGroup.nuclide.main": "Nuclide"
 }

@@ -5,20 +5,28 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import com.penguin.nuclide.content.registry.ModBlockEntities;
+import com.penguin.nuclide.data.NuclideDataLoader;
+import com.penguin.nuclide.data.SpeciesDefinition;
+import com.penguin.nuclide.misc.IHaveHoverInformation;
+import com.penguin.nuclide.species.SpeciesContainer;
 import com.penguin.nuclide.species.SpeciesStack;
 import com.penguin.nuclide.transport.SpeciesFilter;
 import com.penguin.nuclide.transport.SpeciesTransportNode;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 
-public class SpeciesTankCasingBlockEntity extends BlockEntity implements SpeciesTransportNode {
+public class SpeciesTankCasingBlockEntity extends BlockEntity implements SpeciesTransportNode, IHaveHoverInformation {
 
     private static final String X = "cx";
     private static final String Y = "cy";
@@ -137,5 +145,44 @@ public class SpeciesTankCasingBlockEntity extends BlockEntity implements Species
     @Override
     public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup lookup) {
         return createNbt(lookup);
+    }
+
+    @Override
+    public boolean addHoverInformation(
+            World world,
+            BlockHitResult hit,
+            PlayerEntity player,
+            List<Text> tooltip
+    ) {
+        tooltip.add(Text.literal("Species Vat"));
+
+        BlockEntity be;
+        if (getControllerPos() != null) {
+            be = world.getBlockEntity(getControllerPos());
+        } else {
+            return false;
+        }
+        
+        if (!(be instanceof SpeciesTankControllerBlockEntity controller)) {
+            return false;
+        }
+
+        SpeciesContainer container = controller.getContainer();
+
+        if (container == null || container.isEmpty()) {
+            tooltip.add(Text.literal("Contents: empty"));
+            return true;
+        }
+
+        tooltip.add(Text.literal("Contents:"));
+
+        for (SpeciesStack stack : container.stacks()) {
+            SpeciesDefinition definition = NuclideDataLoader.SPECIES.getById(stack.speciesId());
+            String name = definition != null ? definition.name() : stack.speciesId();
+
+            tooltip.add(Text.literal("- " + name + ": " + stack.count() + " mmol"));
+        }
+
+        return true;
     }
 }

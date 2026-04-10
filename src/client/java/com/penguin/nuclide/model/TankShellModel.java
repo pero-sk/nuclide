@@ -19,7 +19,6 @@ import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
-import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
 import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -37,7 +36,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockRenderView;
 
 @Environment(EnvType.CLIENT)
-public final class TankShellModel implements BakedModel, FabricBakedModel {
+public final class TankShellModel implements BakedModel {
 
     private static final Identifier CAP_ID = Identifier.of("nuclide", "block/tank/cap");
 
@@ -65,14 +64,14 @@ public final class TankShellModel implements BakedModel, FabricBakedModel {
     private static RenderMaterial solidMaterial() {
         return RendererAccess.INSTANCE.getRenderer()
                 .materialFinder()
-                .blendMode(0, BlendMode.SOLID)
+                .blendMode(BlendMode.SOLID)
                 .find();
     }
 
     private static RenderMaterial cutoutMaterial() {
         return RendererAccess.INSTANCE.getRenderer()
                 .materialFinder()
-                .blendMode(0, BlendMode.CUTOUT)
+                .blendMode(BlendMode.CUTOUT)
                 .find();
     }
 

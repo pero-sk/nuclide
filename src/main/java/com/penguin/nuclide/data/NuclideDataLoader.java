@@ -35,7 +35,6 @@ public final class NuclideDataLoader {
     private NuclideDataLoader() {}
 
     public static void register() {
-
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(
                 new SimpleSynchronousResourceReloadListener() {
                     @Override
@@ -62,7 +61,7 @@ public final class NuclideDataLoader {
         Nuclide.LOGGER.info("Loaded {} species", SPECIES.size());
     }
 
-    private static void loadDirectory(ResourceManager manager, String folder, SpeciesKind kind) {     
+    private static void loadDirectory(ResourceManager manager, String folder, SpeciesKind kind) {
         Map<Identifier, Resource> resources = manager.findResources(
                 folder,
                 id -> id.getPath().endsWith(".json")
@@ -92,8 +91,8 @@ public final class NuclideDataLoader {
         Molecule molecule = parsed.molecule();
 
         StateType state = parseState(getRequiredString(json, "default_state"));
-        double meltingPoint = getRequiredDouble(json, "melting_point");
-        double boilingPoint = getRequiredDouble(json, "boiling_point");
+        Double meltingPoint = getOptionalDouble(json, "melting_point");
+        Double boilingPoint = getOptionalDouble(json, "boiling_point");
         boolean radioactive = getRequiredBoolean(json, "radioactive");
         boolean toxic = getRequiredBoolean(json, "toxic");
         boolean flammable = getRequiredBoolean(json, "flammable");
@@ -101,6 +100,7 @@ public final class NuclideDataLoader {
 
         String namespace = extractNamespace(id);
         SpeciesRepresentation representation = parseRepresentation(json.getAsJsonObject("representation"));
+        StabilityDefinition stability = parseStability(json.getAsJsonObject("stability"));
 
         return new SpeciesDefinition(
                 id,
@@ -118,8 +118,34 @@ public final class NuclideDataLoader {
                 flammable,
                 molarMass,
                 kind,
-                representation
+                representation,
+                stability
         );
+    }
+
+    private static StabilityDefinition parseStability(JsonObject json) {
+        if (json == null) {
+            return StabilityDefinition.STABLE;
+        }
+
+        StabilityType type = parseStabilityType(getOptionalString(json, "type"));
+        Integer lifetimeTicks = getOptionalInt(json, "lifetime_ticks");
+        boolean decaysInContainer = getOptionalBoolean(json, "decays_in_container", false);
+        boolean decaysInWorld = getOptionalBoolean(json, "decays_in_world", false);
+
+        return new StabilityDefinition(type, lifetimeTicks, decaysInContainer, decaysInWorld);
+    }
+
+    private static StabilityType parseStabilityType(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return StabilityType.STABLE;
+        }
+
+        try {
+            return StabilityType.valueOf(raw.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Unknown stability type '" + raw + "'");
+        }
     }
 
     private static SpeciesRepresentation parseRepresentation(JsonObject json) {
@@ -135,7 +161,7 @@ public final class NuclideDataLoader {
     }
 
     private static PhaseRepresentation parsePhaseRepresentation(JsonObject parent, String key) {
-        if (!parent.has(key) || parent.get(key).isJsonNull()) {
+        if (parent == null || !parent.has(key) || parent.get(key).isJsonNull()) {
             return null;
         }
 
@@ -169,10 +195,12 @@ public final class NuclideDataLoader {
         if (!json.has(key) || json.get(key).isJsonNull()) {
             throw new IllegalArgumentException("Missing required string field '" + key + "'");
         }
+
         String value = json.get(key).getAsString();
         if (value.isBlank()) {
             throw new IllegalArgumentException("Field '" + key + "' cannot be blank");
         }
+
         return value;
     }
 
@@ -180,6 +208,7 @@ public final class NuclideDataLoader {
         if (json == null || !json.has(key) || json.get(key).isJsonNull()) {
             return null;
         }
+
         String value = json.get(key).getAsString();
         return value.isBlank() ? null : value;
     }
@@ -188,17 +217,49 @@ public final class NuclideDataLoader {
         if (!json.has(key) || json.get(key).isJsonNull()) {
             throw new IllegalArgumentException("Missing required number field '" + key + "'");
         }
+
         double value = json.get(key).getAsDouble();
         if (!Double.isFinite(value)) {
             throw new IllegalArgumentException("Field '" + key + "' must be finite");
         }
+
         return value;
+    }
+
+    private static Double getOptionalDouble(JsonObject json, String key) {
+        if (json == null || !json.has(key) || json.get(key).isJsonNull()) {
+            return null;
+        }
+
+        double value = json.get(key).getAsDouble();
+        if (!Double.isFinite(value)) {
+            throw new IllegalArgumentException("Field '" + key + "' must be finite");
+        }
+
+        return value;
+    }
+
+    private static Integer getOptionalInt(JsonObject json, String key) {
+        if (json == null || !json.has(key) || json.get(key).isJsonNull()) {
+            return null;
+        }
+
+        return json.get(key).getAsInt();
     }
 
     private static boolean getRequiredBoolean(JsonObject json, String key) {
         if (!json.has(key) || json.get(key).isJsonNull()) {
             throw new IllegalArgumentException("Missing required boolean field '" + key + "'");
         }
+
+        return json.get(key).getAsBoolean();
+    }
+
+    private static boolean getOptionalBoolean(JsonObject json, String key, boolean fallback) {
+        if (json == null || !json.has(key) || json.get(key).isJsonNull()) {
+            return fallback;
+        }
+
         return json.get(key).getAsBoolean();
     }
 }

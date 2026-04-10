@@ -17,6 +17,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
@@ -264,9 +267,14 @@ public class PipeBlockEntity extends BlockEntity implements SpeciesTransportNode
         return filterSpeciesId;
     }
 
-    public void setFilterSpeciesId(@Nullable String speciesId) {
-        this.filterSpeciesId = speciesId;
+    public void setFilterSpeciesId(@Nullable String filterSpeciesId) {
+        this.filterSpeciesId = (filterSpeciesId == null || filterSpeciesId.isBlank()) ? null : filterSpeciesId;
+
         markDirty();
+
+        if (world != null && !world.isClient) {
+            world.updateListeners(pos, getCachedState(), getCachedState(), 3);
+        }
     }
 
     @Override
@@ -301,6 +309,16 @@ public class PipeBlockEntity extends BlockEntity implements SpeciesTransportNode
         } else {
             filterSpeciesId = null;
         }
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return createNbt(registryLookup);
+    }
+
+    @Override
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
     }
 
     @Override

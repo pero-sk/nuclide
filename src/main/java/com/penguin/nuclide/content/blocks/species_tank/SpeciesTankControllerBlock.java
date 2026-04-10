@@ -25,7 +25,6 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
@@ -143,33 +142,5 @@ public class SpeciesTankControllerBlock extends BlockWithEntity {
         }
 
         return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-    }
-
-    @Override
-    protected ActionResult onUse(
-            BlockState state,
-            World world,
-            BlockPos pos,
-            PlayerEntity player,
-            BlockHitResult hit
-    ) {
-        if (world.isClient) {
-            return ActionResult.SUCCESS;
-        }
-
-        if (!player.getMainHandStack().isEmpty()) {
-            return ActionResult.PASS;
-        }
-
-        BlockEntity be = world.getBlockEntity(pos);
-        if (be instanceof SpeciesTankControllerBlockEntity controller) {
-            player.sendMessage(
-                    controller.getDisplayText(),
-                    false
-            );
-            return ActionResult.SUCCESS;
-        }
-
-        return ActionResult.PASS;
     }
 }

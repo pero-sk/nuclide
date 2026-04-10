@@ -270,7 +270,7 @@ public final class ReactionCommandDispatcher {
                 boolean satisfied = false;
 
                 if (tag != null) {
-                    for (String _speciesId : tag.values()) {
+                    for ( @SuppressWarnings("unused") String _species :tag.values()) {
                         int available = availableSpecies.countOf(inputStack.key());
                         if (available >= input.count()) {
                             satisfied = true;

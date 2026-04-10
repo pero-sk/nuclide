@@ -1,0 +1,17 @@
+{
+  "id": "molecules:hydroxyl",
+  "name": "Hydroxyl Radical",
+  "nowns": "HO",
+  "molar_mass": 17.00734,
+  "default_state": "gas",
+  "melting_point": null,
+  "boiling_point": null,
+  "radioactive": false,
+  "toxic": false,
+  "flammable": true,
+  "representation": {
+    "liquid": null,
+    "solid": null,
+    "gas": null
+  }
+}

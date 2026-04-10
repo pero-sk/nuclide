@@ -1,9 +1,5 @@
 package com.penguin.nuclide.renderer;
 
-import com.penguin.nuclide.renderer.MoleculeLayout;
-import com.penguin.nuclide.renderer.MoleculeLayout.LayoutAtom;
-import com.penguin.nuclide.renderer.MoleculeLayout.LayoutBond;
-
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 

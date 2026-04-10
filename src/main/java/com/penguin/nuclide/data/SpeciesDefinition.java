@@ -1,9 +1,9 @@
 package com.penguin.nuclide.data;
 
-import com.penguin.nuclide.nowns.ParsedMolecule;
-import com.penguin.nuclide.species.SpeciesRepresentation;
 import com.penguin.nuclide.atomic.Molecule;
 import com.penguin.nuclide.atomic.StateType;
+import com.penguin.nuclide.nowns.ParsedMolecule;
+import com.penguin.nuclide.species.SpeciesRepresentation;
 
 import java.util.Objects;
 
@@ -18,8 +18,8 @@ public final class SpeciesDefinition {
 
     // chemical properties
     private final StateType state;
-    private final double meltingPoint;
-    private final double boilingPoint;
+    private final Double meltingPoint;
+    private final Double boilingPoint;
     private final boolean radioactive;
     private final boolean toxic;
     private final boolean flammable;
@@ -28,6 +28,9 @@ public final class SpeciesDefinition {
     // kind
     private final SpeciesKind kind;
     private final SpeciesRepresentation representation;
+
+    // stability
+    private final StabilityDefinition stability;
 
     public SpeciesDefinition(
             String id,
@@ -38,31 +41,33 @@ public final class SpeciesDefinition {
             Molecule molecule,
             ParsedMolecule parsed,
             StateType state,
-            double meltingPoint,
-            double boilingPoint,
+            Double meltingPoint,
+            Double boilingPoint,
             boolean radioactive,
             boolean toxic,
             boolean flammable,
             double molarMass,
             SpeciesKind kind,
-            SpeciesRepresentation representation
+            SpeciesRepresentation representation,
+            StabilityDefinition stability
     ) {
-        this.id = Objects.requireNonNull(id);
-        this.name = Objects.requireNonNull(name);
-        this.rawNowns = Objects.requireNonNull(rawNowns);
-        this.normalizedNowns = Objects.requireNonNull(normalizedNowns);
-        this.namespace = Objects.requireNonNull(namespace);
-        this.molecule = Objects.requireNonNull(molecule);
-        this.parsed = Objects.requireNonNull(parsed);
-        this.state = Objects.requireNonNull(state);
+        this.id = Objects.requireNonNull(id, "id");
+        this.name = Objects.requireNonNull(name, "name");
+        this.rawNowns = Objects.requireNonNull(rawNowns, "rawNowns");
+        this.normalizedNowns = Objects.requireNonNull(normalizedNowns, "normalizedNowns");
+        this.namespace = Objects.requireNonNull(namespace, "namespace");
+        this.molecule = Objects.requireNonNull(molecule, "molecule");
+        this.parsed = Objects.requireNonNull(parsed, "parsed");
+        this.state = Objects.requireNonNull(state, "state");
         this.meltingPoint = meltingPoint;
         this.boilingPoint = boilingPoint;
         this.radioactive = radioactive;
         this.toxic = toxic;
         this.flammable = flammable;
         this.molarMass = molarMass;
-        this.kind = Objects.requireNonNull(kind);
-        this.representation = Objects.requireNonNull(representation);
+        this.kind = Objects.requireNonNull(kind, "kind");
+        this.representation = Objects.requireNonNull(representation, "representation");
+        this.stability = Objects.requireNonNull(stability, "stability");
     }
 
     public String id() {
@@ -97,12 +102,16 @@ public final class SpeciesDefinition {
         return state;
     }
 
-    public double meltingPoint() {
+    public Double meltingPoint() {
         return meltingPoint;
     }
 
-    public double boilingPoint() {
+    public Double boilingPoint() {
         return boilingPoint;
+    }
+
+    public boolean hasPhaseData() {
+        return meltingPoint != null && boilingPoint != null;
     }
 
     public boolean radioactive() {
@@ -129,6 +138,10 @@ public final class SpeciesDefinition {
         return representation;
     }
 
+    public StabilityDefinition stability() {
+        return stability;
+    }
+
     @Override
     public String toString() {
         return "SpeciesDefinition{" +
@@ -137,6 +150,15 @@ public final class SpeciesDefinition {
                 ", rawNowns='" + rawNowns + '\'' +
                 ", normalizedNowns='" + normalizedNowns + '\'' +
                 ", namespace='" + namespace + '\'' +
+                ", state=" + state +
+                ", meltingPoint=" + meltingPoint +
+                ", boilingPoint=" + boilingPoint +
+                ", radioactive=" + radioactive +
+                ", toxic=" + toxic +
+                ", flammable=" + flammable +
+                ", molarMass=" + molarMass +
+                ", kind=" + kind +
+                ", stability=" + stability +
                 '}';
     }
 }

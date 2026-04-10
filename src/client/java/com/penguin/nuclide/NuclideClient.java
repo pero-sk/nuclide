@@ -3,7 +3,7 @@ package com.penguin.nuclide;
 import org.lwjgl.glfw.GLFW;
 
 import com.penguin.nuclide.content.registry.ModBlocks;
-import com.penguin.nuclide.model.TankModelLoading;
+import com.penguin.nuclide.model.ModModelLoading;
 import com.penguin.nuclide.screen.MoleculeDebugScreen;
 import com.penguin.nuclide.screen.SpeciesFilterScreen;
 
@@ -29,7 +29,7 @@ public final class NuclideClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        TankModelLoading.register();
+        ModModelLoading.register();
 
         BlockRenderLayerMap.INSTANCE.putBlock(
                 ModBlocks.SPECIES_TANK_CASING,
@@ -57,12 +57,18 @@ public final class NuclideClient implements ClientModInitializer {
         UseItemCallback.EVENT.register((player, world, hand) -> {
             ItemStack stack = player.getStackInHand(hand);
 
-            if (stack.getItem() instanceof SpeciesFilterItem) {
-                openSpeciesFilterScreen(hand);
-                return net.minecraft.util.TypedActionResult.success(stack, true);
+            if (!(stack.getItem() instanceof SpeciesFilterItem)) {
+                return net.minecraft.util.TypedActionResult.pass(stack);
             }
 
-            return net.minecraft.util.TypedActionResult.pass(stack);
+            if (!world.isClient) {
+                return net.minecraft.util.TypedActionResult.success(stack);
+            }
+
+            MinecraftClient client = MinecraftClient.getInstance();
+            client.execute(() -> client.setScreen(new SpeciesFilterScreen(hand)));
+
+            return net.minecraft.util.TypedActionResult.success(stack);
         });
 
         HudRenderCallback.EVENT.register((drawContext, tickDelta) -> {

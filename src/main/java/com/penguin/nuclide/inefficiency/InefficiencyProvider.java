@@ -71,4 +71,22 @@ public interface InefficiencyProvider {
 
         return builder.toString();
     }
+
+    default List<String> getInefficiencyBreakdownLines() {
+        List<String> lines = new java.util.ArrayList<>();
+
+        int basePenalty = getBasePenaltyP();
+        if (basePenalty > 0) {
+            lines.add("Base penalty: +" + basePenalty + "P");
+        }
+
+        for (InefficiencyEntry entry : getInefficiencyEntries()) {
+            lines.add(entry.name() + ": +" + entry.penaltyP() + "P");
+        }
+
+        lines.add("Total penalty: +" + getTotalPenaltyP() + "P");
+        lines.add(String.format(java.util.Locale.ROOT, "Inefficiency: %.1f%%", getInefficiencyFraction() * 100.0));
+
+        return lines;
+    }
 }

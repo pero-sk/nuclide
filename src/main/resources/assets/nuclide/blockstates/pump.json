@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "nuclide:block/pump" },
+    "facing=south": { "model": "nuclide:block/pump", "y": 180 },
+    "facing=west":  { "model": "nuclide:block/pump", "y": 270 },
+    "facing=east":  { "model": "nuclide:block/pump", "y": 90 }
+  }
+}

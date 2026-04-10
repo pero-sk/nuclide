@@ -1,0 +1,12 @@
+{
+  "id": "nuclide:binder_recombination_hydroxyl",
+  "name": "Hydroxyl Recombination",
+  "inputs": [
+    { "species": "molecules:hydroxyl", "count": 2 }
+  ],
+  "outputs": [
+    { "species": "molecules:water", "count": 1 },
+    { "species": "atoms:oxygen", "count": 1}
+  ],
+  "duration": 40
+}

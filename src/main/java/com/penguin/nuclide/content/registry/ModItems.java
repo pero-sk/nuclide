@@ -42,6 +42,9 @@ public class ModItems {
     public static final SpeciesFilterItem SPECIES_FILTER_ITEM =
         new SpeciesFilterItem(new Item.Settings());
 
+    public static final BlockItem CREATIVE_ENERGISER_BLOCKITEM =
+        new BlockItem(ModBlocks.CREATIVE_ENERGISER, new Item.Settings());
+
     private ModItems() {}
 
     public static void register() {
@@ -55,6 +58,7 @@ public class ModItems {
         reg_item(Nuclide.asIdentifier("cable"), CABLE);
         reg_item(Nuclide.asIdentifier("species_filter"), SPECIES_FILTER_ITEM);
         reg_item(Nuclide.asIdentifier("binder"), BINDER_BLOCKITEM);
+        reg_item(Nuclide.asIdentifier("creative_energiser"), CREATIVE_ENERGISER_BLOCKITEM);
     }
 
     private static void reg_item(Identifier id, Item item) {

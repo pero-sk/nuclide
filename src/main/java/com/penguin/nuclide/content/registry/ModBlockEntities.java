@@ -3,6 +3,7 @@ package com.penguin.nuclide.content.registry;
 import com.penguin.nuclide.Nuclide;
 import com.penguin.nuclide.content.blockentities.binder.BinderBlockEntity;
 import com.penguin.nuclide.content.blockentities.cable.CableBlockEntity;
+import com.penguin.nuclide.content.blockentities.creative.energiser.CreativeEnergiserBlockEntity;
 import com.penguin.nuclide.content.blockentities.electrolyser.ElectrolyserBlockEntity;
 import com.penguin.nuclide.content.blockentities.hand_crank.HandCrankBlockEntity;
 import com.penguin.nuclide.content.blockentities.hydrogen_furnace.HydrogenFurnaceBlockEntity;
@@ -105,6 +106,15 @@ public final class ModBlockEntities {
                         Nuclide.asIdentifier("vent"),
                         BlockEntityType.Builder
                                 .create(VentBlockEntity::new, ModBlocks.VENT)
+                                .build(null)
+                );
+
+        public static final BlockEntityType<CreativeEnergiserBlockEntity> CREATIVE_ENERGISER =
+                Registry.register(
+                        Registries.BLOCK_ENTITY_TYPE,
+                        Nuclide.asIdentifier("creative_energiser"),
+                        BlockEntityType.Builder
+                                .create(CreativeEnergiserBlockEntity::new, ModBlocks.CREATIVE_ENERGISER)
                                 .build(null)
                 );
 

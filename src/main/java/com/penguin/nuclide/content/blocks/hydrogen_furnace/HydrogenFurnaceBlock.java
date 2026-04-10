@@ -12,10 +12,6 @@ import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -36,28 +32,7 @@ public class HydrogenFurnaceBlock extends BlockWithEntity {
     protected MapCodec<? extends BlockWithEntity> getCodec() {
         return CODEC;
     }
-    
 
-    @Override
-    protected ActionResult onUse(
-            BlockState state,
-            World world,
-            BlockPos pos,
-            PlayerEntity player,
-            BlockHitResult hit
-    ) {
-        if (world.isClient) {return ActionResult.FAIL;}
-
-        BlockEntity be = world.getBlockEntity(pos);
-        if (!(be instanceof HydrogenFurnaceBlockEntity furnace)) {return ActionResult.FAIL;}
-
-        player.sendMessage(Text.literal(
-            "Energy: " + furnace.getStoredEnergy() + "\n" +
-            "Progress: " + furnace.getProgress() + "\n"
-        ));
-
-        return ActionResult.SUCCESS_NO_ITEM_USED;
-    }
 
     @Override
     public BlockRenderType getRenderType(BlockState state) {

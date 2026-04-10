@@ -13,6 +13,7 @@ import com.penguin.nuclide.content.registry.ModBlockEntities;
 import com.penguin.nuclide.content.registry.ModBlocks;
 import com.penguin.nuclide.data.NuclideDataLoader;
 import com.penguin.nuclide.data.SpeciesDefinition;
+import com.penguin.nuclide.misc.IHaveHoverInformation;
 import com.penguin.nuclide.misc.TankHalfX;
 import com.penguin.nuclide.misc.TankHalfZ;
 import com.penguin.nuclide.misc.TankLayer;
@@ -23,6 +24,7 @@ import com.penguin.nuclide.transport.SpeciesTransportNode;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
@@ -31,11 +33,12 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-public class SpeciesTankControllerBlockEntity extends BlockEntity implements SpeciesTransportNode {
+public class SpeciesTankControllerBlockEntity extends BlockEntity implements SpeciesTransportNode, IHaveHoverInformation {
 
     private static final String CONTAINER_KEY = "container";
 
@@ -477,5 +480,33 @@ public class SpeciesTankControllerBlockEntity extends BlockEntity implements Spe
                     3
             );
         }
+    }
+
+    @Override
+    public boolean addHoverInformation(
+            World world,
+            BlockHitResult hit,
+            PlayerEntity player,
+            List<Text> tooltip
+    ) {
+        tooltip.add(Text.literal("Species Vat"));
+
+        SpeciesContainer container = getContainer(); // replace with your actual getter
+
+        if (container == null || container.isEmpty()) {
+            tooltip.add(Text.literal("Contents: empty"));
+            return true;
+        }
+
+        tooltip.add(Text.literal("Contents:"));
+
+        for (SpeciesStack stack : container.stacks()) {
+            SpeciesDefinition definition = NuclideDataLoader.SPECIES.getById(stack.speciesId());
+            String name = definition != null ? definition.name() : stack.speciesId();
+
+            tooltip.add(Text.literal("- " + name + ": " + stack.count() + " mmol"));
+        }
+
+        return true;
     }
 }

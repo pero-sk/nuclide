@@ -1,7 +1,6 @@
 {
   "id": "nuclide:binder_recombination_oxygen",
   "name": "Oxygen Recombination",
-  "machine": "binder",
   "inputs": [
     { "species": "atoms:oxygen", "count": 2 }
   ],
