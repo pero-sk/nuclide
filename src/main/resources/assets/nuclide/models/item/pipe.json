@@ -1,37 +1,45 @@
 {
   "parent": "block/block",
   "textures": {
-    "dev": "minecraft:block/clay"
+    "dev": "minecraft:block/clay",
+    "cside": "nuclide:block/pipe/core_side",
+    "ctop": "nuclide:block/pipe/core_top",
+    "cfront": "nuclide:block/pipe/core_front",
+
+    "aside": "nuclide:block/pipe/arm_side",
+    "afront": "nuclide:block/pipe/arm_front",
+    "atop": "nuclide:block/pipe/arm_top",
+    "abottom": "nuclide:block/pipe/arm_bottom"
   },
   "elements": [
     {
       "from": [5.5, 5, 0],
       "to": [10.5, 10, 8],
       "faces": {
-        "north": { "uv": [0, 0, 5, 5], "texture": "#dev" },
-        "east":  { "uv": [0, 0, 8, 5], "texture": "#dev" },
-        "south": { "uv": [0, 0, 5, 5], "texture": "#dev" },
-        "west":  { "uv": [0, 0, 8, 5], "texture": "#dev" },
-        "up":    { "uv": [0, 0, 8, 5], "rotation": 270, "texture": "#dev" },
-        "down":  { "uv": [0, 0, 8, 5], "rotation": 90,  "texture": "#dev" }
+        "north": { "uv": [0, 0, 16, 16], "texture": "#afront" },
+        "east":  { "uv": [0, 0, 16, 16], "texture": "#aside" },
+        "south": { "uv": [0, 0, 16, 16], "texture": "#afront" },
+        "west":  { "uv": [0, 0, 16, 16], "texture": "#aside" },
+        "up":    { "uv": [0, 0, 16, 16], "rotation": 270, "texture": "#atop" },
+        "down":  { "uv": [0, 0, 16, 16], "rotation": 90,  "texture": "#abottom" }
       }
     },
     {
       "from": [5, 4, 5],
       "to": [11, 11, 11],
       "faces": {
-        "north": { "uv": [0, 0, 6, 6], "texture": "#dev" },
-        "east":  { "uv": [0, 0, 6, 6], "texture": "#dev" },
-        "south": { "uv": [0, 0, 6, 6], "texture": "#dev" },
-        "west":  { "uv": [0, 0, 6, 6], "texture": "#dev" },
-        "up":    { "uv": [0, 0, 6, 6], "texture": "#dev" },
-        "down":  { "uv": [0, 0, 6, 6], "texture": "#dev" }
+        "north": { "uv": [0, 0, 16, 16], "texture": "#cfront" },
+        "east":  { "uv": [0, 0, 16, 16], "texture": "#cside" },
+        "south": { "uv": [0, 0, 16, 16], "texture": "#cside" },
+        "west":  { "uv": [0, 0, 16, 16], "texture": "#cside" },
+        "up":    { "uv": [0, 0, 16, 16], "texture": "#ctop" },
+        "down":  { "uv": [0, 0, 16, 16], "texture": "#ctop" }
       }
     }
   ],
   "display": {
-    "thirdperson_righthand": { "scale": [0.6, 0.6, 0.94375] },
-    "thirdperson_lefthand":  { "scale": [0.6, 0.6, 0.94375] },
+    "thirdperson_righthand": { "scale": [0.6, 0.6, 0.6] },
+    "thirdperson_lefthand":  { "scale": [0.6, 0.6, 0.6] },
     "firstperson_righthand": { "translation": [0, 2.75, 0], "scale": [0.8, 0.8, 0.8] },
     "firstperson_lefthand":  { "translation": [0, 2.75, 0], "scale": [0.8, 0.8, 0.8] },
     "ground": { "rotation": [90, 0, 0], "translation": [0, 0, 0.5] },
